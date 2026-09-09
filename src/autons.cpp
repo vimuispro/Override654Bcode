@@ -63,6 +63,18 @@ void Autons::skillsAuton(){
 
 }
 void Autons::auton1(){
+chassis->setPose(-68.039, -0.62, 90);// start facing center
+
+chassis->moveToPoint(-46.929, -20.826, 1000,{},false);// move to goal
+chassis->turnToHeading(0,500,{},false)// make back side face goal
+chassis->moveToPoint(-46.929, -25, 100,{.forwards = false},true);//back up into the goal
+//score preload
+chassis->turnToPoint(-23,-23,100,{},false)
+chassis->moveTo(-27.674, -23.575, 5000);
+chassis->moveTo(-42.961, -23.484, 5000);
+chassis->moveTo(-47.248, -43.348, 5000);
+chassis->moveTo(-47.018, -26.42, 5000);
+
 
 
 }
