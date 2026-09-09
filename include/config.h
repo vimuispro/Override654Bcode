@@ -23,10 +23,9 @@ extern pros::Motor front_motor;
 extern pros::Motor back_motor;
 
 // pistons
-extern pros::adi::DigitalOut Wing;
-extern pros::adi::DigitalOut ML;
-extern pros::adi::DigitalOut MG;
-extern pros::adi::DigitalOut MD;
+extern pros::adi::DigitalOut claw;
+extern pros::adi::DigitalOut toggle;
+
 
 // drivetrain + chassis
 extern lemlib::Drivetrain drivetrain;

@@ -4,30 +4,29 @@
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
 // motor groups
-pros::MotorGroup leftMotors({-11, -12, 13}, pros::MotorGearset::blue);
-pros::MotorGroup rightMotors({-18, 19, 20}, pros::MotorGearset::blue);
+pros::MotorGroup leftMotors({0, 0, 0}, pros::MotorGearset::blue);
+pros::MotorGroup rightMotors({0, 0, 0}, pros::MotorGearset::blue);
 
 // sensors
-pros::Imu imu(15);
-pros::Rotation verticalEnc(-17);
+pros::Imu imu(0);
+pros::Rotation verticalEnc(0);
 
 // tracking wheels
 lemlib::TrackingWheel vertical(&verticalEnc, lemlib::Omniwheel::NEW_2, 0);
 
 // extra motors
-pros::Motor front_motor(-6, pros::MotorGearset::blue);
-pros::Motor back_motor(-4, pros::MotorGearset::blue);
+pros::Motor front_motor(x, pros::MotorGearset::blue);
+pros::Motor back_motor(x, pros::MotorGearset::blue);
 
 // pistons
-pros::adi::DigitalOut Wing('A');
-pros::adi::DigitalOut ML('B');
-pros::adi::DigitalOut MG('C');
-pros::adi::DigitalOut MD('E');
+pros::adi::DigitalOut claw('X');
+pros::adi::DigitalOut toggle('X');
+
 bool driverControlEnabled = true;
 
 // drivetrain + chassis
 lemlib::Drivetrain drivetrain(&leftMotors, &rightMotors, 11.425,
-                              lemlib::Omniwheel::NEW_325, 450, 2);
+                              lemlib::Omniwheel::NEW_275, 450, 2);
 
 lemlib::ControllerSettings linearController( //distance >= 48 inches use speed limit = 85. kp = 9, kd = 170, ki = 0
     9, 

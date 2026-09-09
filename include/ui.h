@@ -3,9 +3,9 @@
 enum AutonMode {
     AUTON_NONE,
     AUTON_SKILLS,
-    AUTON_PUSH7RIGHT,
-    AUTON_M3L4LEFT,
-    AUTON_AWPLEFT
+    AUTON_auton1,
+    AUTON_auton2,
+    AUTON_auton3
 };
 
 extern AutonMode selectedAuton;
