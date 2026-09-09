@@ -74,7 +74,7 @@ void buildFieldScreen() {
         selectedAuton = AUTON_SKILLS;
     }, LV_EVENT_CLICKED, NULL);
 
-    // Push7Left
+    // Auton 1 // change name to whatever
     auton1Btn = lv_button_create(fieldScreen);
     lv_obj_set_size(auton1Btn, btnW, btnH);
     lv_obj_set_pos(auton1Btn, 250, 20);
@@ -86,7 +86,7 @@ void buildFieldScreen() {
         selectedAuton = AUTON_auton1;
     }, LV_EVENT_CLICKED, NULL);
 
-    // M3L4Right
+    // Auton 2
     auton2Btn = lv_button_create(fieldScreen);
     lv_obj_set_size(auton2Btn, btnW, btnH);
     lv_obj_set_pos(auton2Btn, 250, 80);
@@ -98,7 +98,7 @@ void buildFieldScreen() {
         selectedAuton = AUTON_auton2;
     }, LV_EVENT_CLICKED, NULL);
 
-    // AWPleft
+    // Auton 3
     auton3Btn = lv_button_create(fieldScreen);
     lv_obj_set_size(auton3Btn, btnW, btnH);
     lv_obj_set_pos(auton3Btn, 20, 80);

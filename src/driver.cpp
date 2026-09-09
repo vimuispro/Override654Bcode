@@ -26,8 +26,28 @@ void DriverControl::update() {
     autonomous(); // run auton 
     driverControlEnabled = true;  // turn on
     }
-    
-    // Front motor control with R2 and R1 buttons
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /*
     
 
     
@@ -81,3 +101,4 @@ void DriverControl::update() {
 
     pros::delay(25);
  }
+*/

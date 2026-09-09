@@ -15,12 +15,12 @@ pros::Rotation verticalEnc(0);
 lemlib::TrackingWheel vertical(&verticalEnc, lemlib::Omniwheel::NEW_2, 0);
 
 // extra motors
-pros::Motor front_motor(x, pros::MotorGearset::blue);
-pros::Motor back_motor(x, pros::MotorGearset::blue);
+pros::Motor front_motor(0, pros::MotorGearset::blue);
+pros::Motor back_motor(0, pros::MotorGearset::blue);
 
 // pistons
-pros::adi::DigitalOut claw('X');
-pros::adi::DigitalOut toggle('X');
+pros::adi::DigitalOut claw('A');
+pros::adi::DigitalOut toggle('A');
 
 bool driverControlEnabled = true;
 
@@ -28,7 +28,7 @@ bool driverControlEnabled = true;
 lemlib::Drivetrain drivetrain(&leftMotors, &rightMotors, 11.425,
                               lemlib::Omniwheel::NEW_275, 450, 2);
 
-lemlib::ControllerSettings linearController( //distance >= 48 inches use speed limit = 85. kp = 9, kd = 170, ki = 0
+lemlib::ControllerSettings linearController( 
     9, 
     0, 
     170, 
@@ -39,7 +39,7 @@ lemlib::ControllerSettings linearController( //distance >= 48 inches use speed l
     500, 
     22
 );
-lemlib::ControllerSettings angularController( //almost perfect small jitter
+lemlib::ControllerSettings angularController( 
     6, 
     0.01, 
     60.2, 

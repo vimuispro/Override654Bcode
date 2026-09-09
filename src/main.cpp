@@ -54,20 +54,24 @@ void autonomous() {
             autons.skillsAuton();
             break;
 
-        case AUTON_PUSH7RIGHT:
-            autons.Push7Right();
+        case AUTON_test:
+            autons.testAuton();
             break;
 
-        case AUTON_M3L4LEFT:
-            autons.M3L4Left();
+        case AUTON_auton1:
+            autons.auton1();
             break;
 
-        case AUTON_AWPLEFT:
-            autons.AWPleft();
+        case AUTON_auton2:
+            autons.auton2();
+            break;
+
+        case AUTON_auton2:
+            autons.auton2();
             break;
 
         default:
-            autons.AWPleft(); // fallback
+            autons.testAuton(); // fallback
             break;
     }
 }
