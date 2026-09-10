@@ -15,8 +15,8 @@ pros::Rotation verticalEnc(0);
 lemlib::TrackingWheel vertical(&verticalEnc, lemlib::Omniwheel::NEW_2, 0);
 
 // extra motors
-pros::Motor front_motor(0, pros::MotorGearset::blue);
-pros::Motor back_motor(0, pros::MotorGearset::blue);
+//pros::Motor front_motor(0, pros::MotorGearset::blue);
+//pros::Motor back_motor(0, pros::MotorGearset::blue);
 
 // pistons
 pros::adi::DigitalOut claw('A');

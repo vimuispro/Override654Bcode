@@ -66,8 +66,8 @@ void autonomous() {
             autons.auton2();
             break;
 
-        case AUTON_auton2:
-            autons.auton2();
+        case AUTON_auton3:
+            autons.auton3();
             break;
 
         default:

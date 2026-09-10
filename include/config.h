@@ -19,8 +19,8 @@ extern lemlib::TrackingWheel horizontal;
 extern lemlib::TrackingWheel vertical;
 
 // extra motors
-extern pros::Motor front_motor;
-extern pros::Motor back_motor;
+//extern pros::Motor front_motor;
+//extern pros::Motor back_motor;
 
 // pistons
 extern pros::adi::DigitalOut claw;
