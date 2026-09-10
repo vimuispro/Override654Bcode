@@ -26,6 +26,35 @@ void DriverControl::update() {
     autonomous(); // run auton 
     driverControlEnabled = true;  // turn on
     }
+
+    if (controller->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R2)){
+        cascade_motor1.move(127)
+        cascade_motor2.move(-127)
+    }
+    if (controller->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R1)){
+        cascade_motor1.move(-127)
+        cascade_motor2.move(127)
+    }
+    if (controller->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)){
+        
+    }
+    if (controller->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)){
+        
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
 
 
