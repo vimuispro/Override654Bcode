@@ -15,7 +15,7 @@ pros::Rotation verticalEnc(0);
 lemlib::TrackingWheel vertical(&verticalEnc, lemlib::Omniwheel::NEW_2, 0);
 
 // extra motors
-pros::Motor intake_motor(0, pros::MotorGearset::blue);
+pros::Motor intake_motor(20, pros::MotorGearset::blue);
 pros::Motor cascade_motor1(0, pros::MotorGearset::blue);
 pros::Motor cascade_motor2(0, pros::MotorGearset::blue);
 
