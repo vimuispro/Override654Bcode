@@ -4,8 +4,8 @@
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
 // motor groups
-pros::MotorGroup leftMotors({11, -12, 0}, pros::MotorGearset::blue);
-pros::MotorGroup rightMotors({19, -20, 0}, pros::MotorGearset::blue);
+pros::MotorGroup leftMotors({11, -12}, pros::MotorGearset::blue);
+pros::MotorGroup rightMotors({19, -20}, pros::MotorGearset::blue);
 
 // sensors
 pros::Imu imu(13);
@@ -16,8 +16,7 @@ lemlib::TrackingWheel vertical(&verticalEnc, lemlib::Omniwheel::NEW_2, 0);
 
 // extra motors
 pros::Motor intake_motor(4, pros::MotorGearset::blue);
-pros::Motor cascade_motor1(17, pros::MotorGearset::blue);
-pros::Motor cascade_motor2(18, pros::MotorGearset::blue);
+pros::MotorGroup cascadeMotors({17, 18}, pros::MotorGearset::blue);
 
 
 // pistons

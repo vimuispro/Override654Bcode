@@ -20,8 +20,8 @@ extern lemlib::TrackingWheel vertical;
 
 // extra motors
 extern pros::Motor intake_motor;
-extern pros::Motor cascade_motor1;
-extern pros::Motor cascade_motor2;
+
+extern pros::MotorGroup cascadeMotors;
 
 // pistons
 extern pros::adi::DigitalOut claw;
