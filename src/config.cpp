@@ -4,25 +4,25 @@
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
 // motor groups
-pros::MotorGroup leftMotors({0, 0, 0}, pros::MotorGearset::blue);
-pros::MotorGroup rightMotors({0, 0, 0}, pros::MotorGearset::blue);
+pros::MotorGroup leftMotors({1, 2, 5}, pros::MotorGearset::blue);
+pros::MotorGroup rightMotors({3, 4, 6}, pros::MotorGearset::blue);
 
 // sensors
-pros::Imu imu(0);
-pros::Rotation verticalEnc(0);
+pros::Imu imu(13);
+pros::Rotation verticalEnc(10);
 
 // tracking wheels
 lemlib::TrackingWheel vertical(&verticalEnc, lemlib::Omniwheel::NEW_2, 0);
 
 // extra motors
-pros::Motor intake_motor(0, pros::MotorGearset::blue);
-pros::Motor cascade_motor1(0, pros::MotorGearset::blue);
-pros::Motor cascade_motor2(0, pros::MotorGearset::blue);
+pros::Motor intake_motor(20, pros::MotorGearset::blue);
+pros::Motor cascade_motor1(17, pros::MotorGearset::blue);
+pros::Motor cascade_motor2(18, pros::MotorGearset::blue);
 
 
 // pistons
 pros::adi::DigitalOut claw('A');
-pros::adi::DigitalOut toggle('A');
+pros::adi::DigitalOut toggle('B');
 
 bool driverControlEnabled = true;
 

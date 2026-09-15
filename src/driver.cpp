@@ -28,34 +28,37 @@ void DriverControl::update() {
     }
 
     if (controller->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R2)){
-        cascade_motor1.move(127)
-        cascade_motor2.move(-127)
+        cascade_motor1.move(127);
+        cascade_motor2.move(-127);
     }
     if (controller->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R1)){
-        cascade_motor1.move(-127)
-        cascade_motor2.move(127)
-    }
-    if (controller->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)){
-        
-    }
-    if (controller->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)){
-        
+        cascade_motor1.move(-127);
+        cascade_motor2.move(127);
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+    if (controller->get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
+        intake_motor.move(127);
+    } else if (controller->get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
+        intake_motor.move(-127);
+    } else {
+        intake_motor.move(0);
+    }
+    pros::delay(25);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

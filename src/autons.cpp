@@ -66,22 +66,22 @@ void Autons::auton1(){
 chassis->setPose(-68.039, -0.62, 90);// start facing center
 //rotate toggle
 chassis->moveToPoint(-46.929, -20.826, 1000,{},false);// move to goal
-chassis->turnToHeading(0,500,{},false)// make back side face goal
+chassis->turnToHeading(0,500,{},false);// make back side face goal
 chassis->moveToPoint(-46.929, -25, 100,{.forwards = false},true);//back up into the goal
 //score preload
 pros::delay(2000);
 chassis->moveToPoint(-46.929, -20, 100,{.forwards = false},false); //move a bit forward
-chassis->turnToPoint(-23,-23,100,{.forwards = false},false)// turn toward cup
-chassis->moveTo(-27.674, -23.575, 5000); // drive to cup
+chassis->turnToPoint(-23,-23,100,{.forwards = false},false);// turn toward cup
+chassis->moveToPoint(-27.674, -23.575, 5000); // drive to cup
 //pick up cup with claw
 pros::delay(2000);
 
-chassis->moveTo(-45, -23.484, 5000,{.forwards = false},false); // go back to goal
+chassis->moveToPoint(-45, -23.484, 5000,{.forwards = false},false); // go back to goal
 //score cup
 
 //get the other cup and score
-//chassis->moveTo(-47.248, -43.348, 5000);
-//chassis->moveTo(-47.018, -26.42, 5000);
+//chassis->moveToPoint(-47.248, -43.348, 5000);
+//chassis->moveToPoint(-47.018, -26.42, 5000);
 
 
 

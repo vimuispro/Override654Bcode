@@ -3,6 +3,7 @@
 enum AutonMode {
     AUTON_NONE,
     AUTON_SKILLS,
+    AUTON_test,
     AUTON_auton1,
     AUTON_auton2,
     AUTON_auton3
