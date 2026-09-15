@@ -21,7 +21,7 @@ Bottom‑right corner = (479, 239)
 void initialize() {
     pros::lcd::initialize();   // optional, for PROS text
     pros::Task calibrationTask([] {
-        chassis.calibrate();
+        chassis.calibrate(); // drive will activate without callibration
     });
     uiInit();                  // ⭐ build your LVGL UI
 
