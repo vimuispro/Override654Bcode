@@ -20,7 +20,9 @@ Bottom‑right corner = (479, 239)
 
 void initialize() {
     pros::lcd::initialize();   // optional, for PROS text
-    chassis.calibrate(); // calibrate sensors    
+    pros::Task calibrationTask([] {
+        chassis.calibrate();
+    });
     uiInit();                  // ⭐ build your LVGL UI
 
 
@@ -78,9 +80,9 @@ void autonomous() {
 
 
 void opcontrol() {
-    while (driverControlEnabled) {
-        driver.update(); 
+    while (true) {
+        driver.update();
         pros::delay(15);
-}
+    }
 }
 

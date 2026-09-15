@@ -43,21 +43,22 @@ void DriverControl::update() {
     } else {
         intake_motor.move(0);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    pros::delay(25);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
