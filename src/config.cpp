@@ -10,13 +10,15 @@ pros::MotorGroup rightMotors({19, -20}, pros::MotorGearset::blue);
 // sensors
 pros::Imu imu(13);
 pros::Rotation verticalEnc(10);
-
+pros::Rotation cascadeEnc(14);
 // tracking wheels
 lemlib::TrackingWheel vertical(&verticalEnc, lemlib::Omniwheel::NEW_2, 0);
+lemlib::TrackingWheel cascade(&cascadeEnc, lemlib::Omniwheel::NEW_2, 0);
+
 
 // extra motors
 pros::Motor intake_motor(4, pros::MotorGearset::blue);
-pros::MotorGroup cascadeMotors({17, 18}, pros::MotorGearset::blue);
+pros::MotorGroup cascadeMotors({17, -18}, pros::MotorGearset::blue);
 
 
 // pistons
@@ -54,7 +56,7 @@ lemlib::ControllerSettings angularController(
 
 lemlib::OdomSensors sensors(
     &vertical, 
-    nullptr, 
+    &cascade, 
     nullptr, //horizontal gone
     nullptr, 
     &imu
