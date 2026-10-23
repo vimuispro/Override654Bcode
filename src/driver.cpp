@@ -45,6 +45,18 @@ void DriverControl::update() {
         intake_motor.move(0);
     }
     pros::delay(25);
+
+    static bool claw = false;
+    if (controller->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
+        claw = !claw; // flip the state 
+        Claw.set_value(claw);
+    } 
+    static bool claw2 = false;
+    if (controller->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
+        claw2 = !claw2; // flip the state 
+        toggle.set_value(claw2);
+    } 
+    
 }
 
 

@@ -24,7 +24,7 @@ extern pros::Motor intake_motor;
 extern pros::MotorGroup cascadeMotors;
 
 // pistons
-extern pros::adi::DigitalOut claw;
+extern pros::adi::DigitalOut Claw;
 extern pros::adi::DigitalOut toggle;
 
 
