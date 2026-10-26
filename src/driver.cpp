@@ -10,12 +10,18 @@ DriverControl::DriverControl(pros::Controller* controller, lemlib::Chassis* chas
     : controller(controller), chassis(chassis) {}
 
 void DriverControl::update() {
-  
+    static bool drivetrainReversed = false;
+    if (controller->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_LEFT)) {
+        drivetrainReversed = !drivetrainReversed;
+    }
 
     if (driverControlEnabled){
     int rightX = controller->get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
     int leftY = controller->get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
     
+    if (drivetrainReversed) {
+        leftY = -leftY;
+    }
 
     chassis->arcade(leftY, rightX);
     }
