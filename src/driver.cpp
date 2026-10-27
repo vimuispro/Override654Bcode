@@ -45,7 +45,7 @@ void DriverControl::update() {
     
     if (controller->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
         claw2 = false;
-        Claw2.set_value(claw2);
+        toggle.set_value(claw2);
         cascadeMacroRunning = cascadeVal < 0;
     }
 
@@ -81,7 +81,6 @@ void DriverControl::update() {
         Claw.set_value(claw);
     }
 
-    static bool claw2 = false;
     if (controller->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
         claw2 = !claw2; // flip the state 
         toggle.set_value(claw2);
