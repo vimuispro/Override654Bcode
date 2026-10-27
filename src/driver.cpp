@@ -26,7 +26,7 @@ void DriverControl::update() {
     autonomous(); // run auton 
     driverControlEnabled = true;  // turn on
     }
-    
+    //cascade code
     if (controller->get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
         cascadeMotors.move(127);
     } else if (controller->get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
@@ -34,6 +34,10 @@ void DriverControl::update() {
     } else {
         cascadeMotors.move(0);
     }
+    //makes sure cascade doesn't go too low
+    if(cascadeMotors.get_position() > 0){
+        cascadeMotors.move(0);
+  
   
 
 
