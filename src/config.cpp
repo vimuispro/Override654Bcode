@@ -14,7 +14,6 @@ pros::Rotation cascadeEnc(14);
 int cascadeVal = 0;
 // tracking wheels
 lemlib::TrackingWheel vertical(&verticalEnc, lemlib::Omniwheel::NEW_2, 0);
-lemlib::TrackingWheel cascade(&cascadeEnc, lemlib::Omniwheel::NEW_2, 0);
 
 
 // extra motors
@@ -56,8 +55,8 @@ lemlib::ControllerSettings angularController(
 );
 
 lemlib::OdomSensors sensors(
-    &vertical, 
-    &cascade, 
+    &vertical,
+    nullptr,
     nullptr, //horizontal gone
     nullptr, 
     &imu

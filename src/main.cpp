@@ -21,9 +21,8 @@ Bottom‑right corner = (479, 239)
 void initialize() {
     pros::lcd::initialize();   // optional, for PROS text
     cascadeMotors.set_brake_mode_all(pros::MotorBrake::hold);
-    pros::Task calibrationTask([] {
-        chassis.calibrate(); // drive will activate without callibration
-    });
+    chassis.calibrate();
+    chassis.setPose(0, 0, 0);
     uiInit();                  // ⭐ build your LVGL UI
 
 
@@ -84,11 +83,10 @@ void opcontrol() {
     while (true) {
         driver.update();
         pros::delay(15);
-        pros::Controller master(pros::E_CONTROLLER_MASTER);
         lemlib::Pose pose = chassis.getPose();
         double x = pose.x;         // Current X coordinate (in inches)
         double y = pose.y;   
-        master.print(0, 0, "X: %.1f Y: %.1f", x, y);
+        controller.print(0, 0, "X: %.1f Y: %.1f", x, y);
 
     }
 }

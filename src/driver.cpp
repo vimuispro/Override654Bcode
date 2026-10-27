@@ -56,6 +56,7 @@ void DriverControl::update() {
             cascadeMacroRunning = false;
             cascadeMotors.move(0);
         }
+        
     } else if (controller->get_digital(pros::E_CONTROLLER_DIGITAL_R2) &&
         (!cascadeLimiterEnabled || cascadeVal < 0)) {
         cascadeMotors.move(127);
