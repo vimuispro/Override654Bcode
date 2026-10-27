@@ -11,6 +11,7 @@ pros::MotorGroup rightMotors({19, -20}, pros::MotorGearset::blue);
 pros::Imu imu(13);
 pros::Rotation verticalEnc(10);
 pros::Rotation cascadeEnc(14);
+int cascadeVal = 0;
 // tracking wheels
 lemlib::TrackingWheel vertical(&verticalEnc, lemlib::Omniwheel::NEW_2, 0);
 lemlib::TrackingWheel cascade(&cascadeEnc, lemlib::Omniwheel::NEW_2, 0);
