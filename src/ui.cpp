@@ -1,4 +1,5 @@
 #include "pros/apix.h"
+#include "liblvgl/lvgl.h"
 #include "ui.h"
 #include "config.h"
 
