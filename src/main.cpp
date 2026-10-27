@@ -20,6 +20,7 @@ Bottom‑right corner = (479, 239)
 
 void initialize() {
     pros::lcd::initialize();   // optional, for PROS text
+    cascadeMotors.set_brake_mode_all(pros::MotorBrake::hold);
     pros::Task calibrationTask([] {
         chassis.calibrate(); // drive will activate without callibration
     });
@@ -85,4 +86,3 @@ void opcontrol() {
         pros::delay(15);
     }
 }
-

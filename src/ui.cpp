@@ -15,6 +15,7 @@ static lv_obj_t* auton1Btn;
 static lv_obj_t* auton2Btn;
 static lv_obj_t* auton3Btn;
 static lv_obj_t* coordLabel;
+static lv_obj_t* cascadeLabel;
 
 // Styles
 static lv_style_t selectedStyle;
@@ -50,6 +51,9 @@ void buildHomeScreen() {
     coordLabel = lv_label_create(homeScreen);
     lv_label_set_text(coordLabel, "X: 0  Y: 0  H: 0");
     lv_obj_set_pos(coordLabel, 10, 10);   // move wherever you want
+    cascadeLabel = lv_label_create(homeScreen);
+    lv_label_set_text(cascadeLabel, "Cascade: 0");
+    lv_obj_set_pos(cascadeLabel, 10, 30);
 
 }
 
@@ -185,6 +189,8 @@ void uiUpdate() {
 
     // Update label
     lv_label_set_text(coordLabel, buf);
+    snprintf(buf, sizeof(buf), "Cascade: %d", cascadeVal);
+    lv_label_set_text(cascadeLabel, buf);
     pros::delay(50);
 
 }
