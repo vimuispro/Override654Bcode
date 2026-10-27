@@ -15,6 +15,7 @@ static lv_obj_t* skillsBtn;
 static lv_obj_t* auton1Btn;
 static lv_obj_t* auton2Btn;
 static lv_obj_t* auton3Btn;
+static lv_obj_t* testBtn;
 static lv_obj_t* coordLabel;
 static lv_obj_t* cascadeLabel;
 
@@ -115,10 +116,22 @@ void buildFieldScreen() {
         selectedAuton = AUTON_auton3;
     }, LV_EVENT_CLICKED, NULL);
 
+    // Test auton
+    testBtn = lv_button_create(fieldScreen);
+    lv_obj_set_size(testBtn, btnW, btnH);
+    lv_obj_set_pos(testBtn, 250, 140);
+    lv_obj_add_style(testBtn, &normalStyle, LV_PART_MAIN);
+    lv_obj_t* testLabel = lv_label_create(testBtn);
+    lv_label_set_text(testLabel, "Test");
+    lv_obj_center(testLabel);
+    lv_obj_add_event_cb(testBtn, [](lv_event_t* e){
+        selectedAuton = AUTON_test;
+    }, LV_EVENT_CLICKED, NULL);
+
     // Back button
     lv_obj_t* backBtn = lv_button_create(fieldScreen);
     lv_obj_set_size(backBtn, 120, 40);
-    lv_obj_set_pos(backBtn, 150, 180);
+    lv_obj_set_pos(backBtn, 150, 190);
 
     lv_obj_t* backLabel = lv_label_create(backBtn);
     lv_label_set_text(backLabel, "Back");
@@ -137,6 +150,7 @@ void updateAutonHighlight() {
     lv_obj_add_style(auton1Btn, &normalStyle, LV_PART_MAIN);
     lv_obj_add_style(auton2Btn, &normalStyle, LV_PART_MAIN);
     lv_obj_add_style(auton3Btn, &normalStyle, LV_PART_MAIN);
+    lv_obj_add_style(testBtn, &normalStyle, LV_PART_MAIN);
 
     if (selectedAuton == AUTON_SKILLS)
         lv_obj_add_style(skillsBtn, &selectedStyle, LV_PART_MAIN);
@@ -149,6 +163,9 @@ void updateAutonHighlight() {
 
     if (selectedAuton == AUTON_auton3)
         lv_obj_add_style(auton3Btn, &selectedStyle, LV_PART_MAIN);
+
+    if (selectedAuton == AUTON_test)
+        lv_obj_add_style(testBtn, &selectedStyle, LV_PART_MAIN);
 }
 
 // ------------------------

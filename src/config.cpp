@@ -31,27 +31,27 @@ bool driverControlEnabled = true;
 lemlib::Drivetrain drivetrain(&leftMotors, &rightMotors, 11.425,
                               lemlib::Omniwheel::NEW_275, 450, 2);
 
-lemlib::ControllerSettings linearController( 
-    9, 
-    0, 
-    170, 
-    3, 
-    1, 
-    100, 
-    3, 
-    500, 
-    22
+lemlib::ControllerSettings linearController(
+    9,   // Proportional gain (kP)
+    0,   // Integral gain (kI)
+    170, // Derivative gain (kD)
+    3,   // Integral anti-windup error range
+    1,   // Small position error threshold (inches)
+    100, // Time to remain within the small error threshold (milliseconds)
+    3,   // Large position error threshold (inches)
+    500, // Time to remain within the large error threshold (milliseconds)
+    22   // Maximum acceleration (slew)
 );
-lemlib::ControllerSettings angularController( 
-    6, 
-    0.01, 
-    60.2, 
-    3, 
-    1.5, 
-    100, 
-    3, 
-    500, 
-    20
+lemlib::ControllerSettings angularController(
+    6,    // Proportional gain (kP)
+    0.01, // Integral gain (kI)
+    60.2, // Derivative gain (kD)
+    3,    // Integral anti-windup error range
+    1.5,  // Small heading error threshold (degrees)
+    100,  // Time to remain within the small error threshold (milliseconds)
+    3,    // Large heading error threshold (degrees)
+    500,  // Time to remain within the large error threshold (milliseconds)
+    20    // Maximum acceleration (slew)
 );
 
 lemlib::OdomSensors sensors(
