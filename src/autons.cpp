@@ -35,22 +35,22 @@ void Autons::testAuton() {
     
     
     //LAteral test
-    chassis->moveToPoint(0, -24, 2000, {.forwards = false, .maxSpeed = 100});
+    chassis->moveToPoint(0, -24, 2000, {.forwards = false, .maxSpeed = 127});
 
     pros::delay(500);
 
     // Backward 24"
-    chassis->moveToPoint(0, 0, 2000,{.maxSpeed = 100});
+    chassis->moveToPoint(0, 0, 2000,{.maxSpeed = 127});
 
     pros::delay(500);
 
     // Forward 48"
-    chassis->moveToPoint(0, -48, 3000, {.forwards = false, .maxSpeed = 85});
+    chassis->moveToPoint(0, -48, 3000, {.forwards = false, .maxSpeed = 127});
 
     pros::delay(500);
 
     // Back to start
-    chassis->moveToPoint(0, 0, 3000,{.maxSpeed = 85});
+    chassis->moveToPoint(0, 0, 3000,{.maxSpeed = 127});
 
     pros::delay(800);
     
@@ -83,7 +83,7 @@ chassis->moveToPoint(-45, -23.484, 5000,{.forwards = false},false); // go back t
 //chassis->moveToPoint(-47.248, -43.348, 5000);
 //chassis->moveToPoint(-47.018, -26.42, 5000);
 
-
+//127 is max spseed
 
 }
 void Autons::auton2(){

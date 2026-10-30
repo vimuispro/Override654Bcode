@@ -14,7 +14,7 @@ void DriverControl::startPeriod() {
 }
 
 void DriverControl::update() {
-    static bool drivetrainReversed = false;
+    static bool drivetrainReversed = true;
     static bool cascadeMacroRunning = false;
     static bool claw = false;
     static bool claw2 = true;
@@ -72,7 +72,8 @@ void DriverControl::update() {
     } else if (controller->get_digital(pros::E_CONTROLLER_DIGITAL_R2) &&
         (!cascadeLimiterEnabled || cascadeVal > 0)) {
         cascadeMotors.move(127);
-    } else if (controller->get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
+    } else if (controller->get_digital(pros::E_CONTROLLER_DIGITAL_R1) &&
+        (!cascadeLimiterEnabled || cascadeVal < 2700)) {
         cascadeMotors.move(-127);
     } else {
         cascadeMotors.move(0);

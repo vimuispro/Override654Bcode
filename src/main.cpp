@@ -74,8 +74,6 @@ void  autonomous() {
             break;
     }
 }
-
-
 void opcontrol() {
     driver.startPeriod();
     while (true) {
