@@ -11,13 +11,11 @@ extern pros::MotorGroup rightMotors;
 
 // sensors
 extern pros::Imu imu;
-extern pros::Rotation horizontalEnc;
 extern pros::Rotation verticalEnc;
 extern pros::Rotation cascadeEnc;
 extern double cascadeVal;
 
 // tracking wheels
-extern lemlib::TrackingWheel horizontal;
 extern lemlib::TrackingWheel vertical;
 extern lemlib::TrackingWheel cascade;
 

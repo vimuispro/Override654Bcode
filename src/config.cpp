@@ -9,7 +9,7 @@ pros::MotorGroup rightMotors({10, -6}, pros::MotorGearset::blue);
 
 // sensors
 pros::Imu imu(7);
-pros::Rotation verticalEnc(2);
+pros::Rotation verticalEnc(-2);
 pros::Rotation cascadeEnc(12);
 double cascadeVal = 0.0;
 
@@ -31,27 +31,27 @@ bool driverControlEnabled = true;
 lemlib::Drivetrain drivetrain(&leftMotors, &rightMotors, 11.425,
                               lemlib::Omniwheel::NEW_275, 450, 2);
 
-lemlib::ControllerSettings linearController( 
-    10, 
-    0, 
-    40, 
-    3, 
-    1, 
-    100, 
-    3, 
-    500, 
-    20
+lemlib::ControllerSettings linearController(
+    12,  // Proportional gain (kP)
+    0,   // Integral gain (kI), disabled
+    40,  // Derivative gain (kD)
+    3,   // Integral anti-windup error range, in inches
+    1,   // Small-error range, in inches
+    100, // Time to remain within the small-error range before settling, in milliseconds
+    3,   // Large-error range, in inches
+    500, // Time to remain within the large-error range before settling, in milliseconds
+    20   // Maximum acceleration (slew)
 );
-lemlib::ControllerSettings angularController( 
-    5, 
-    0.00, 
-    36, 
-    3, 
-    1.5, 
-    100, 
-    3, 
-    500, 
-    0
+lemlib::ControllerSettings angularController(
+    5,    // Proportional gain (kP)
+    0.00, // Integral gain (kI), disabled
+    36,   // Derivative gain (kD)
+    3,    // Integral anti-windup error range, in degrees
+    1.5,  // Small-error range, in degrees
+    100,  // Time to remain within the small-error range before settling, in milliseconds
+    3,    // Large-error range, in degrees
+    500,  // Time to remain within the large-error range before settling, in milliseconds
+    0     // Maximum acceleration (slew); 0 disables slew limiting
 );
 
 lemlib::OdomSensors sensors(
