@@ -10,8 +10,7 @@ DriverControl::DriverControl(pros::Controller* controller, lemlib::Chassis* chas
     : controller(controller), chassis(chassis) {}
 
 void DriverControl::startPeriod() {
-    cascadeEnc.set_position(0);
-    cascadeLimiterEnabled = true;
+    cascadeLimiterEnabled = false;
 }
 
 void DriverControl::update() {
@@ -47,7 +46,11 @@ void DriverControl::update() {
         toggle_motor.move(0);
     }
 
-    
+    if (!cascadeLimiterEnabled &&
+        controller->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X)) {
+        cascadeEnc.set_position(0);
+        cascadeLimiterEnabled = true;
+    }
 
 
     cascadeVal = cascadeEnc.get_position() / 100.0;

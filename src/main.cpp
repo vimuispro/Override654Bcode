@@ -25,9 +25,6 @@ void initialize() {
     chassis.setPose(0, 0, 0);
     uiInit();                  // ⭐ build your LVGL UI
 
-
- 
-            
  }
 
 
