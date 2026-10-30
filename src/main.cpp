@@ -80,6 +80,7 @@ void  autonomous() {
 
 
 void opcontrol() {
+    driver.startPeriod();
     while (true) {
         driver.update();
         pros::delay(15);

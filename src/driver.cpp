@@ -9,9 +9,13 @@ extern Autons autons;
 DriverControl::DriverControl(pros::Controller* controller, lemlib::Chassis* chassis)
     : controller(controller), chassis(chassis) {}
 
+void DriverControl::startPeriod() {
+    cascadeEnc.set_position(0);
+    cascadeLimiterEnabled = true;
+}
+
 void DriverControl::update() {
     static bool drivetrainReversed = false;
-    static bool cascadeLimiterEnabled = false;
     static bool cascadeMacroRunning = false;
     static bool claw = false;
     static bool claw2 = true;
@@ -46,10 +50,6 @@ void DriverControl::update() {
     
 
 
-    if (controller->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X)) {
-        cascadeEnc.set_position(0);
-        cascadeLimiterEnabled = true;
-    }
     cascadeVal = cascadeEnc.get_position() / 100.0;
     
     if (controller->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {

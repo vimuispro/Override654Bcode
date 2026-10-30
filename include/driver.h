@@ -7,9 +7,11 @@ class DriverControl {
 public:
     DriverControl(pros::Controller* controller, lemlib::Chassis* chassis);
 
+    void startPeriod();
     void update();   // called repeatedly during opcontrol
 
 private:
     pros::Controller* controller;
     lemlib::Chassis* chassis;
+    bool cascadeLimiterEnabled = false;
 };
