@@ -15,7 +15,6 @@ double cascadeVal = 0.0;
 
 // tracking wheels
 lemlib::TrackingWheel vertical(&verticalEnc, lemlib::Omniwheel::NEW_2, 0);
-lemlib::TrackingWheel cascade(&cascadeEnc, lemlib::Omniwheel::NEW_2, 0);
 
 // extra motors
 pros::Motor intake_motor(4, pros::MotorGearset::blue);
