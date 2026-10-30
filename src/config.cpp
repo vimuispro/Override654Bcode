@@ -8,14 +8,12 @@ pros::MotorGroup leftMotors({5, -11}, pros::MotorGearset::blue);
 pros::MotorGroup rightMotors({10, -6}, pros::MotorGearset::blue);
 
 // sensors
-pros::Imu imu(13);
-pros::Rotation horizontalEnc(10);
-pros::Rotation verticalEnc(5);
+pros::Imu imu(7);
+pros::Rotation verticalEnc(2);
 pros::Rotation cascadeEnc(12);
 double cascadeVal = 0.0;
 
 // tracking wheels
-lemlib::TrackingWheel horizontal(&horizontalEnc, lemlib::Omniwheel::NEW_2, 0);
 lemlib::TrackingWheel vertical(&verticalEnc, lemlib::Omniwheel::NEW_2, 0);
 lemlib::TrackingWheel cascade(&cascadeEnc, lemlib::Omniwheel::NEW_2, 0);
 

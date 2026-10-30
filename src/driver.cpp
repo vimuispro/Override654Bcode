@@ -43,6 +43,8 @@ void DriverControl::update() {
         toggle_motor.move(0);
     }
 
+    
+
 
     if (controller->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X)) {
         cascadeEnc.set_position(0);

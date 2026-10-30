@@ -48,7 +48,7 @@ void competition_initialize() {}
 ASSET(example_txt); // '.' replaced with "_" to make c++ happy
 
 
-void autonomous() {
+void  autonomous() {
 
     switch (selectedAuton) {
 
