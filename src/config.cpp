@@ -32,15 +32,15 @@ lemlib::Drivetrain drivetrain(&leftMotors, &rightMotors, 11.425,
                               lemlib::Omniwheel::NEW_275, 450, 2);
 
 lemlib::ControllerSettings linearController( 
-    9, 
+    10, 
     0, 
-    170, 
+    40, 
     3, 
     1, 
     100, 
     3, 
     500, 
-    22
+    20
 );
 lemlib::ControllerSettings angularController( 
     5, 
