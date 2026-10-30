@@ -43,15 +43,15 @@ lemlib::ControllerSettings linearController(
     22
 );
 lemlib::ControllerSettings angularController( 
-    6, 
-    0.01, 
-    60.2, 
+    5, 
+    0.00, 
+    36, 
     3, 
     1.5, 
     100, 
     3, 
     500, 
-    20
+    0
 );
 
 lemlib::OdomSensors sensors(
