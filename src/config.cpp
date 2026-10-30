@@ -57,7 +57,7 @@ lemlib::ControllerSettings angularController(
 
 lemlib::OdomSensors sensors(
     &vertical, 
-    &cascade, 
+    nullptr, 
     nullptr, //horizontal gone
     nullptr, 
     &imu

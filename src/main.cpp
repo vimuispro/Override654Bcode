@@ -21,6 +21,7 @@ Bottom‑right corner = (479, 239)
 void initialize() {
     pros::lcd::initialize();   // optional, for PROS text
     cascadeMotors.set_brake_mode_all(pros::MotorBrake::hold);
+    imu.reset();
     chassis.calibrate();
     chassis.setPose(0, 0, 0);
     uiInit();                  // ⭐ build your LVGL UI

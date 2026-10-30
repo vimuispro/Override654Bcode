@@ -33,7 +33,7 @@ void Autons::testAuton() {
     // Back to 0°
     chassis->turnToHeading(0, 2000);
     
-    /*
+    
     //LAteral test
     chassis->moveToPoint(0, 24, 2000,{.maxSpeed = 100});
 
@@ -51,7 +51,7 @@ void Autons::testAuton() {
 
     // Back to start
     chassis->moveToPoint(0, 0, 3000,{.maxSpeed = 85});
-*/
+
     pros::delay(800);
     
 }
