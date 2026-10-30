@@ -35,22 +35,22 @@ void Autons::testAuton() {
     
     
     //LAteral test
-    chassis->moveToPoint(0, 24, 2000,{.maxSpeed = 100});
+    //chassis->moveToPoint(0, 24, 2000,{.maxSpeed = 100});
 
-    pros::delay(500);
+    //pros::delay(500);
 
     // Backward 24"
-    chassis->moveToPoint(0, 0, 2000,{.maxSpeed = 100});
+    //chassis->moveToPoint(0, 0, 2000,{.maxSpeed = 100});
 
-    pros::delay(500);
+    //pros::delay(500);
 
     // Forward 48"
-    chassis->moveToPoint(0, 48, 3000, {.maxSpeed = 85});
+    //chassis->moveToPoint(0, 48, 3000, {.maxSpeed = 85});
 
-    pros::delay(500);
+    //pros::delay(500);
 
     // Back to start
-    chassis->moveToPoint(0, 0, 3000,{.maxSpeed = 85});
+    //chassis->moveToPoint(0, 0, 3000,{.maxSpeed = 85});
 
     pros::delay(800);
     
