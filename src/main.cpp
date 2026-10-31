@@ -23,7 +23,9 @@ void initialize() {
     colorSensor.set_led_pwm(100);
     cascadeMotors.set_brake_mode_all(pros::MotorBrake::hold);
     chassis.calibrate();
-    chassis.setPose(0, 0, 0);
+    // Heading 180 flips BOTH axes: driving forward from here makes Y go negative,
+    // and +X / -X swap sides. (Rotating the field 180 degrees = negating X and Y.)
+    chassis.setPose(0, 0, 180);
     uiInit();                  // ⭐ build your LVGL UI
 
  }
