@@ -19,7 +19,7 @@ void DriverControl::update() {
     static bool claw = false;
     static bool claw2 = true;
     static int displayedTeam = -1;
-    static int displayedSortStatus = -1;
+    static int displayedColorStatus = -1;
     if (controller->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_LEFT)) {
         drivetrainReversed = !drivetrainReversed;
     }
@@ -30,7 +30,7 @@ void DriverControl::update() {
 
     const int currentTeam = isBlueTeam ? 0 : 1;
     if (currentTeam != displayedTeam) {
-        controller->print(1, 0, isBlueTeam ? "Team: Blue (R)" : "Team: Red (R)");
+        controller->print(1, 0, isBlueTeam ? "Team: Blue" : "Team: Red");
         displayedTeam = currentTeam;
     }
 
@@ -54,33 +54,28 @@ void DriverControl::update() {
 
     const std::int32_t proximity = colorSensor.get_proximity();
     const double hue = colorSensor.get_hue();
-    int currentSortStatus;
-    const char* sortMessage;
-    if (proximity < 0 || hue < 0) {
-        toggle_motor.move(0);
-        currentSortStatus = 0;
-        sortMessage = "Sort: Error";
-    } else if (proximity >= 80) {
-        const bool targetColorDetected = isBlueTeam
-            ? hue >= 190 && hue <= 260
-            : hue <= 30 || hue >= 330;
-        if (targetColorDetected) {
-            toggle_motor.move(0);
-            currentSortStatus = 1;
-            sortMessage = "Sort: Target";
-        } else {
-            toggle_motor.move(127);
-            currentSortStatus = 2;
-            sortMessage = "Sort: Searching";
-        }
+    const double saturation = colorSensor.get_saturation();
+    int currentColorStatus;
+    const char* colorMessage;
+    if (proximity < 0 || hue < 0 || saturation < 0) {
+        currentColorStatus = 0;
+        colorMessage = "Color: Error";
+    } else if (proximity >= 80 && saturation >= 0.2) {
+        const bool blueDetected = hue >= 190 && hue <= 260;
+        const bool redDetected = hue <= 30 || hue >= 330;
+        const bool yellowDetected = hue >= 40 && hue <= 80;
+        currentColorStatus = blueDetected ? 1 : redDetected ? 2 : yellowDetected ? 3 : 4;
+        colorMessage = blueDetected ? "Color: Blue"
+                      : redDetected ? "Color: Red"
+                      : yellowDetected ? "Color: Yellow"
+                                       : "Color: Other";
     } else {
-        toggle_motor.move(0);
-        currentSortStatus = 3;
-        sortMessage = "Sort: No object";
+        currentColorStatus = 5;
+        colorMessage = "Color: None";
     }
-    if (currentSortStatus != displayedSortStatus) {
-        controller->print(2, 0, sortMessage);
-        displayedSortStatus = currentSortStatus;
+    if (currentColorStatus != displayedColorStatus) {
+        controller->print(2, 0, colorMessage);
+        displayedColorStatus = currentColorStatus;
     }
 
     if (!cascadeLimiterEnabled &&
@@ -95,11 +90,11 @@ void DriverControl::update() {
     if (controller->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
         claw2 = false;
         toggle.set_value(claw2);
-        cascadeMacroRunning = cascadeVal < 0;
+        cascadeMacroRunning = cascadeVal > 0;
     }
 
     if (cascadeMacroRunning) {
-        if (cascadeVal < 0) {
+        if (cascadeVal > 0) {
             cascadeMotors.move(127);
         } else {
             cascadeMacroRunning = false;
@@ -110,7 +105,7 @@ void DriverControl::update() {
         (!cascadeLimiterEnabled || cascadeVal > 0)) {
         cascadeMotors.move(127);
     } else if (controller->get_digital(pros::E_CONTROLLER_DIGITAL_R1) &&
-        (!cascadeLimiterEnabled || cascadeVal < 2700)) {
+        (!cascadeLimiterEnabled || cascadeVal < 3000)) {
         cascadeMotors.move(-127);
     } else {
         cascadeMotors.move(0);
@@ -136,6 +131,8 @@ void DriverControl::update() {
         claw2 = !claw2; // flip the state 
         toggle.set_value(claw2);
     }
+    toggle_motor.move(
+        controller->get_digital(pros::E_CONTROLLER_DIGITAL_DOWN) ? 127 : 0);
 }
 
 
