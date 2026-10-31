@@ -16,8 +16,8 @@ void DriverControl::startPeriod() {
 void DriverControl::update() {
     static bool drivetrainReversed = true;
     static bool cascadeMacroRunning = false;
-    static bool claw = false;
-    static bool claw2 = true;
+    static bool claw = true;
+    static bool claw2 = false;
     static int displayedTeam = -1;
     static int displayedColorStatus = -1;
     if (controller->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_LEFT)) {

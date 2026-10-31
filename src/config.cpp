@@ -24,7 +24,7 @@ pros::Motor toggle_motor(-16, pros::MotorGearset::blue);
 pros::MotorGroup cascadeMotors({-14, 21, -13}, pros::MotorGearset::blue);
 
 // pistons
-pros::adi::DigitalOut Claw('G');
+pros::adi::DigitalOut Claw('G', true);
 pros::adi::DigitalOut toggle('H');
 
 bool driverControlEnabled = true;
