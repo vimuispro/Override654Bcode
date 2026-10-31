@@ -64,28 +64,44 @@ void Autons::skillsAuton(){
 }
 void Autons::auton1(){
 
+Claw.set_value(true); // close claw to hold preload
+chassis->setPose(-68.039, -0.62, 90);// start facing center
 
-//chassis->setPose(-68.039, -0.62, 90);// start facing center
 //rotate toggle
-//chassis->moveToPoint(-46.929, -20.826, 1000,{},false);// move to goal
-//chassis->turnToHeading(0,500,{},false);// make back side face goal
-//chassis->moveToPoint(-46.929, -25, 100,{.forwards = false},true);//back up into the goal
-//score preload
-//pros::delay(2000);
-//chassis->moveToPoint(-46.929, -20, 100,{.forwards = false},false); //move a bit forward
-//chassis->turnToPoint(-23,-23,100,{.forwards = false},false);// turn toward cup
-//chassis->moveToPoint(-27.674, -23.575, 5000); // drive to cup
-//pick up cup with claw
-//pros::delay(2000);
+toggle_motor.move(127);
+pros::delay(300);
+toggle_motor.move(0);
+// chassis->moveToPoint(-54.929, -16.826, 10000, {}, false); // move to goal and wait
+// chassis->turnToHeading(90,500,{},false);// make back side face goal
+// cascadeMotors.move_absolute(800, 127);//raise cascade
+// chassis->moveToPoint(-46.929, -25, 100,{},false);//back up into the goal
+// cascadeMotors.move_absolute(100, 127);//lower cascade
+// Claw.set_value(false); // open claw to score
+// //score preload
+// pros::delay(2000);
+// chassis->moveToPoint(-46.929, -20, 100,{.forwards = false},false); //move a bit forward
+// chassis->turnToPoint(-23,-23,100,{.forwards = false},false);// turn toward cup
+// cascadeMotors.move_absolute(0, 127);//raise cascade
+// chassis->moveToPoint(-27.674, -23.575, 5000); // drive to cup
+// Claw.set_value(true); // close claw to pick up cup
+// //pick up cup with claw
+// pros::delay(2000);
+// cascadeMotors.move_absolute(1200, 127);//raise cascade
+// chassis->moveToPoint(-45, -23.484, 5000,{.forwards = false},false); // go back to goal
+// cascadeMotors.move_absolute(500, 127);//lower cascade
+// Claw.set_value(false); // open claw to score
 
-//chassis->moveToPoint(-45, -23.484, 5000,{.forwards = false},false); // go back to goal
-//score cup
+// // get the other cup and score
+// chassis->moveToPoint(-47.248, -43.348, 5000, {}, false);
+// cascadeMotors.move_absolute(0, 127);//lower cascade
+// chassis->waitUntilDone();
+// Claw.set_value(true); // close claw to pick up cup
+// cascadeMotors.move_absolute(1800, 127);//raise cascade
+// chassis->moveToPoint(-47.018, -26.42, 5000);
+// cascadeMotors.move_absolute(1200, 127);//lower cascade
+// Claw.set_value(false); // open claw to score
 
-//get the other cup and score
-//chassis->moveToPoint(-47.248, -43.348, 5000);
-//chassis->moveToPoint(-47.018, -26.42, 5000);
-
-//127 is max spseed
+// 127 is max spseed
 
 }
 void Autons::auton2(){

@@ -9,7 +9,7 @@ pros::MotorGroup rightMotors({10, -6}, pros::MotorGearset::blue);
 
 // sensors
 pros::Imu imu(7);
-pros::Rotation verticalEnc(-2);
+pros::Rotation verticalEnc(2);
 pros::Rotation cascadeEnc(12);
 pros::Optical colorSensor(20);
 double cascadeVal = 0.0;
