@@ -20,6 +20,7 @@ Bottom‑right corner = (479, 239)
 
 void initialize() {
     pros::lcd::initialize();   // optional, for PROS text
+    colorSensor.set_led_pwm(100);
     cascadeMotors.set_brake_mode_all(pros::MotorBrake::hold);
     chassis.calibrate();
     chassis.setPose(0, 0, 0);

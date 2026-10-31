@@ -13,7 +13,9 @@ extern pros::MotorGroup rightMotors;
 extern pros::Imu imu;
 extern pros::Rotation verticalEnc;
 extern pros::Rotation cascadeEnc;
+extern pros::Optical colorSensor;
 extern double cascadeVal;
+extern bool isBlueTeam;
 
 // tracking wheels
 extern lemlib::TrackingWheel vertical;

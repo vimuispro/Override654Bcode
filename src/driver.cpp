@@ -18,8 +18,20 @@ void DriverControl::update() {
     static bool cascadeMacroRunning = false;
     static bool claw = false;
     static bool claw2 = true;
+    static int displayedTeam = -1;
+    static int displayedSortStatus = -1;
     if (controller->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_LEFT)) {
         drivetrainReversed = !drivetrainReversed;
+    }
+
+    if (controller->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
+        isBlueTeam = !isBlueTeam;
+    }
+
+    const int currentTeam = isBlueTeam ? 0 : 1;
+    if (currentTeam != displayedTeam) {
+        controller->print(1, 0, isBlueTeam ? "Team: Blue (R)" : "Team: Red (R)");
+        displayedTeam = currentTeam;
     }
 
     if (driverControlEnabled){
@@ -40,10 +52,35 @@ void DriverControl::update() {
     driverControlEnabled = true;  // turn on
     }
 
-    if (controller->get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
-        toggle_motor.move(127);
+    const std::int32_t proximity = colorSensor.get_proximity();
+    const double hue = colorSensor.get_hue();
+    int currentSortStatus;
+    const char* sortMessage;
+    if (proximity < 0 || hue < 0) {
+        toggle_motor.move(0);
+        currentSortStatus = 0;
+        sortMessage = "Sort: Error";
+    } else if (proximity >= 80) {
+        const bool targetColorDetected = isBlueTeam
+            ? hue >= 190 && hue <= 260
+            : hue <= 30 || hue >= 330;
+        if (targetColorDetected) {
+            toggle_motor.move(0);
+            currentSortStatus = 1;
+            sortMessage = "Sort: Target";
+        } else {
+            toggle_motor.move(127);
+            currentSortStatus = 2;
+            sortMessage = "Sort: Searching";
+        }
     } else {
         toggle_motor.move(0);
+        currentSortStatus = 3;
+        sortMessage = "Sort: No object";
+    }
+    if (currentSortStatus != displayedSortStatus) {
+        controller->print(2, 0, sortMessage);
+        displayedSortStatus = currentSortStatus;
     }
 
     if (!cascadeLimiterEnabled &&
