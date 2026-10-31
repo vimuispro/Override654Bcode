@@ -17,7 +17,7 @@ void DriverControl::update() {
     static bool drivetrainReversed = true;
     static bool cascadeMacroRunning = false;
     static bool claw = true;
-    static bool claw2 = false;
+    static bool claw2 = true; // true = closed, matches the starting state in config.cpp
     static int displayedTeam = -1;
     static int displayedColorStatus = -1;
     if (controller->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_LEFT)) {
@@ -88,7 +88,7 @@ void DriverControl::update() {
     cascadeVal = cascadeEnc.get_position() / 100.0;
     
     if (controller->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
-        claw2 = false;
+        claw2 = false; // Y opens claw2
         toggle.set_value(claw2);
         cascadeMacroRunning = cascadeVal > 0;
     }
