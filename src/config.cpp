@@ -25,7 +25,7 @@ pros::MotorGroup cascadeMotors({-14, 21, -13}, pros::MotorGearset::blue);
 
 // pistons
 pros::adi::DigitalOut Claw('G', true);
-pros::adi::DigitalOut toggle('H', true); // claw2 starts CLOSED (true = closed)
+pros::adi::DigitalOut clawLift('H', true); // piston that moves the claw up/down, starts true
 
 bool driverControlEnabled = true;
 
