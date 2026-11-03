@@ -71,8 +71,8 @@ chassis->setPose(-68.039, -0.62, 90);// start facing center
 toggle_motor.move(127);
 pros::delay(300);
 toggle_motor.move(0);
-// chassis->moveToPoint(-54.929, -16.826, 10000, {}, false); // move to goal and wait
-// chassis->turnToHeading(90,500,{},false);// make back side face goal
+chassis->moveToPoint(-54.929, -16.826, 10000, {}, false); // move to goal and wait
+ chassis->turnToHeading(90,500,{},false);// make back side face goal
 // cascadeMotors.move_absolute(800, 127);//raise cascade
 // chassis->moveToPoint(-46.929, -25, 100,{},false);//back up into the goal
 // cascadeMotors.move_absolute(100, 127);//lower cascade
