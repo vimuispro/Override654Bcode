@@ -9,7 +9,12 @@ public:
 
     
 
-    void lift(int time);
+    // ---- Cascade lift (uses the cascade rotation sensor, port 12) ----
+    // Heights are in the same units as cascadeVal: 0 = bottom, about 3000 = top.
+    void resetLift();                                          // call with the lift at the BOTTOM
+    void liftTo(double height, int timeout = 2000, bool wait = true);
+    void waitUntilLiftDone();
+    double liftHeight();
     void score(bool on);
 
     void testAuton();      

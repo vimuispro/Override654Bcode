@@ -4,12 +4,15 @@
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
 // motor groups
-pros::MotorGroup leftMotors({5, -11}, pros::MotorGearset::blue);
-pros::MotorGroup rightMotors({10, -6}, pros::MotorGearset::blue);
+// Real front = the end the robot drives toward when you push the stick forward. These are the old right ports (reversed)
+// on the left and the old left ports (reversed) on the right, so LemLib's "forward"
+// is the real front and the tracking wheel (port 2, positive) agrees with the motors.
+pros::MotorGroup leftMotors({-10, 6}, pros::MotorGearset::blue);
+pros::MotorGroup rightMotors({-5, 11}, pros::MotorGearset::blue);
 
 // sensors
 pros::Imu imu(7);
-pros::Rotation verticalEnc(-2);
+pros::Rotation verticalEnc(2); // keep POSITIVE
 pros::Rotation cascadeEnc(12);
 pros::Optical colorSensor(20);
 double cascadeVal = 0.0;

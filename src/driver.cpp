@@ -14,12 +14,10 @@ void DriverControl::startPeriod() {
 }
 
 void DriverControl::update() {
-    static bool drivetrainReversed = true;
+    static bool drivetrainReversed = false; // drive motors are fixed in config.cpp, so no flip needed
     static bool cascadeMacroRunning = false;
     static bool claw = true; // true = closed, matches the starting state of Claw in config.cpp
     static bool clawLiftState = true; // matches the starting state of clawLift in config.cpp
-    static int displayedTeam = -1;
-    static int displayedColorStatus = -1;
     if (controller->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_LEFT)) {
         drivetrainReversed = !drivetrainReversed;
     }
@@ -28,11 +26,7 @@ void DriverControl::update() {
         isBlueTeam = !isBlueTeam;
     }
 
-    const int currentTeam = isBlueTeam ? 0 : 1;
-    if (currentTeam != displayedTeam) {
-        controller->print(1, 0, isBlueTeam ? "Team: Blue" : "Team: Red");
-        displayedTeam = currentTeam;
-    }
+    // Team and color are shown on the controller by controllerUiStart() in ui.cpp
 
     if (driverControlEnabled){
     int rightX = controller->get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
@@ -50,32 +44,6 @@ void DriverControl::update() {
     driverControlEnabled = false; // turn off driver control 
     autonomous(); // run auton 
     driverControlEnabled = true;  // turn on
-    }
-
-    const std::int32_t proximity = colorSensor.get_proximity();
-    const double hue = colorSensor.get_hue();
-    const double saturation = colorSensor.get_saturation();
-    int currentColorStatus;
-    const char* colorMessage;
-    if (proximity < 0 || hue < 0 || saturation < 0) {
-        currentColorStatus = 0;
-        colorMessage = "Color: Error";
-    } else if (proximity >= 80 && saturation >= 0.2) {
-        const bool blueDetected = hue >= 190 && hue <= 260;
-        const bool redDetected = hue <= 30 || hue >= 330;
-        const bool yellowDetected = hue >= 40 && hue <= 80;
-        currentColorStatus = blueDetected ? 1 : redDetected ? 2 : yellowDetected ? 3 : 4;
-        colorMessage = blueDetected ? "Color: Blue"
-                      : redDetected ? "Color: Red"
-                      : yellowDetected ? "Color: Yellow"
-                                       : "Color: Other";
-    } else {
-        currentColorStatus = 5;
-        colorMessage = "Color: None";
-    }
-    if (currentColorStatus != displayedColorStatus) {
-        controller->print(2, 0, colorMessage);
-        displayedColorStatus = currentColorStatus;
     }
 
     if (!cascadeLimiterEnabled &&

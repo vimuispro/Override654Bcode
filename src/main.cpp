@@ -27,6 +27,7 @@ void initialize() {
     // and +X / -X swap sides. (Rotating the field 180 degrees = negating X and Y.)
     chassis.setPose(0, 0, 180);
     uiInit();                  // ⭐ build your LVGL UI
+    controllerUiStart();       // controller screen + controller auton selector
 
  }
 
@@ -73,7 +74,7 @@ void  autonomous() {
             break;
 
         default:
-            autons.testAuton(); // fallback
+            autons.auton1(); // fallback
             break;
     }
 }
@@ -82,10 +83,7 @@ void opcontrol() {
     while (true) {
         driver.update();
         pros::delay(15);
-        lemlib::Pose pose = chassis.getPose();
-        double x = pose.x;         // Current X coordinate (in inches)
-        double y = pose.y;   
-        controller.print(0, 0, "X: %.1f Y: %.1f", x, y);
+        // X/Y, team and color are shown on the controller by controllerUiStart() in ui.cpp
 
     }
 }

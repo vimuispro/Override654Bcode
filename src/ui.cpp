@@ -2,6 +2,8 @@
 #include "liblvgl/lvgl.h"
 #include "ui.h"
 #include "config.h"
+#include <cstring>
+#include <cstdio>
 
 // Screens
 static lv_obj_t* homeScreen;
@@ -211,4 +213,110 @@ void uiUpdate() {
     lv_label_set_text(cascadeLabel, buf);
     pros::delay(50);
 
+}
+
+// ========================================================================
+// Controller screen
+// ------------------------------------------------------------------------
+// The V5 controller only accepts one screen update about every 50 ms, so
+// ONE task does all the printing and updates one line at a time.
+//
+// While the robot is DISABLED (on the field / competition switch, before
+// the match):
+//   Line 1: Auto:< a1 >   <- LEFT / RIGHT arrows change the auton
+//   Line 2: Team: Blue    <- A switches Blue / Red
+//   Line 3: Sees: Red     <- what the color sensor sees
+// During driver control:
+//   Line 1: X and Y position
+//   Line 2: Team  (RIGHT arrow still switches it, in driver.cpp)
+//   Line 3: What the color sensor sees
+// ========================================================================
+
+// Order the LEFT / RIGHT arrows step through
+static const AutonMode autonOrder[] = {
+    AUTON_NONE, AUTON_SKILLS, AUTON_test, AUTON_auton1, AUTON_auton2, AUTON_auton3
+};
+static const int autonCount = sizeof(autonOrder) / sizeof(autonOrder[0]);
+
+const char* autonName(AutonMode mode) {
+    switch (mode) {
+        case AUTON_SKILLS: return "Skills";
+        case AUTON_test:   return "Test";
+        case AUTON_auton1: return "a1";
+        case AUTON_auton2: return "a2";
+        case AUTON_auton3: return "a3";
+        default:           return "None";
+    }
+}
+
+static void stepAuton(int direction) {
+    int index = 0;
+    for (int i = 0; i < autonCount; i++) {
+        if (autonOrder[i] == selectedAuton) index = i;
+    }
+    index = (index + direction + autonCount) % autonCount;
+    selectedAuton = autonOrder[index];
+}
+
+const char* seenColorName() {
+    const std::int32_t proximity = colorSensor.get_proximity();
+    const double hue = colorSensor.get_hue();
+    const double saturation = colorSensor.get_saturation();
+
+    if (proximity < 0 || hue < 0 || saturation < 0) return "Error";
+    if (proximity < 80 || saturation < 0.2) return "None";
+    if (hue >= 190 && hue <= 260) return "Blue";
+    if (hue <= 30 || hue >= 330) return "Red";
+    if (hue >= 40 && hue <= 80) return "Yellow";
+    return "Other";
+}
+
+void controllerUiStart() {
+    pros::Task controllerTask([] {
+        char wanted[3][20];
+        char shown[3][20] = {"", "", ""};
+        int nextLine = 0;
+
+        controller.clear();
+        pros::delay(60);
+
+        while (true) {
+            const bool selecting = pros::competition::is_disabled();
+
+            // Selector buttons only work while disabled, so they never
+            // clash with the driver-control buttons.
+            if (selecting) {
+                if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_LEFT))  stepAuton(-1);
+                if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)) stepAuton(+1);
+                if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A))     isBlueTeam = !isBlueTeam;
+            }
+
+            // Line 1
+            if (selecting) {
+                snprintf(wanted[0], sizeof(wanted[0]), "Auto:< %s >", autonName(selectedAuton));
+            } else if (pros::competition::is_autonomous()) {
+                snprintf(wanted[0], sizeof(wanted[0]), "Auto: %s", autonName(selectedAuton));
+            } else {
+                lemlib::Pose pose = chassis.getPose();
+                snprintf(wanted[0], sizeof(wanted[0]), "X:%.1f Y:%.1f", pose.x, pose.y);
+            }
+            // Line 2
+            snprintf(wanted[1], sizeof(wanted[1]), "Team: %s", isBlueTeam ? "Blue" : "Red");
+            // Line 3
+            snprintf(wanted[2], sizeof(wanted[2]), "Sees: %s", seenColorName());
+
+            // Print ONE changed line, taking turns so every line gets updated
+            for (int i = 0; i < 3; i++) {
+                const int line = (nextLine + i) % 3;
+                if (strcmp(wanted[line], shown[line]) != 0) {
+                    controller.print(line, 0, "%-15s", wanted[line]); // pad to wipe old text
+                    strcpy(shown[line], wanted[line]);
+                    nextLine = line + 1;
+                    break;
+                }
+            }
+
+            pros::delay(50);
+        }
+    });
 }
