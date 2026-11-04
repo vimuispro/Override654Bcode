@@ -107,8 +107,12 @@ void DriverControl::update() {
     }
     toggle_motor.move(
         controller->get_digital(pros::E_CONTROLLER_DIGITAL_DOWN) ? 127 : 0); 
-    if (true) {
-        claw_motor.move(127)
+
+    if (controller->get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
+        claw_motor.move(-127);
+    }
+    else {
+        claw_motor.move(0);
     }
 }
 
