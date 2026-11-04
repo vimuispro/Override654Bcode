@@ -42,7 +42,13 @@ void DriverControl::update() {
     // Autonomous turn test on button press up
     if (controller->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
     driverControlEnabled = false; // turn off driver control 
-    autonomous(); // run auton 
+    autonomous(); // run auton
+    // LemLib moves run in the BACKGROUND by default, so autonomous() can return while the
+    // last move is still driving. Without this, that move keeps running the drive motors
+    // (up to its timeout) and fights the sticks -> the "ghost" driving.
+    chassis->waitUntilDone();
+    chassis->cancelAllMotions();
+    autons.stopLift();            // same for a lift move that's still running
     driverControlEnabled = true;  // turn on
     }
 

@@ -14,6 +14,7 @@ public:
     void resetLift();                                          // call with the lift at the BOTTOM
     void liftTo(double height, int timeout = 2000, bool wait = true);
     void waitUntilLiftDone();
+    void stopLift();                                           // cancel a lift move that's still running
     double liftHeight();
     void score(bool on);
 

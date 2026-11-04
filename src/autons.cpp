@@ -20,11 +20,14 @@ static const double LIFT_MAX       = 3000; // never go above this (same as drive
 static const double LIFT_KP        = 0.5;  // speed per unit of distance left; raise if too slow
 static const double LIFT_MIN_SPEED = 25;   // keeps it moving when it's almost there
 static const double LIFT_TOLERANCE = 20;   // "close enough" to the target
+static const int    LIFT_STALL_MS  = 150;  // stop waiting if the lift hasn't moved for this long
 
 static double liftTarget = 0;
 static bool liftActive = false;
 static std::uint32_t liftEndTime = 0;
 static bool liftTaskStarted = false;
+static double liftLastHeight = 0;
+static std::uint32_t liftLastMoveTime = 0;
 
 double Autons::liftHeight() {
     return cascadeEnc.get_position() / 100.0;
@@ -45,9 +48,18 @@ void Autons::liftTo(double height, int timeout, bool wait) {
         pros::Task liftTask([] {
             while (true) {
                 if (liftActive) {
-                    const double error = liftTarget - cascadeEnc.get_position() / 100.0;
+                    const double height = cascadeEnc.get_position() / 100.0;
+                    const double error = liftTarget - height;
 
-                    if (std::fabs(error) <= LIFT_TOLERANCE || pros::millis() > liftEndTime) {
+                    // remember the last time the lift actually moved
+                    if (std::fabs(height - liftLastHeight) > 2) {
+                        liftLastHeight = height;
+                        liftLastMoveTime = pros::millis();
+                    }
+                    const bool stalled = pros::millis() - liftLastMoveTime > LIFT_STALL_MS;
+
+                    // done when: close enough, stuck (hard stop / too heavy), or out of time
+                    if (std::fabs(error) <= LIFT_TOLERANCE || stalled || pros::millis() > liftEndTime) {
                         cascadeMotors.brake();   // hold mode keeps it at this height
                         liftActive = false;
                     } else {
@@ -65,9 +77,18 @@ void Autons::liftTo(double height, int timeout, bool wait) {
 
     liftTarget = height;
     liftEndTime = pros::millis() + timeout;
+    liftLastHeight = cascadeEnc.get_position() / 100.0;
+    liftLastMoveTime = pros::millis();   // give it LIFT_STALL_MS to start moving
     liftActive = true;
 
     if (wait) waitUntilLiftDone();
+}
+
+void Autons::stopLift() {
+    if (liftActive) {
+        liftActive = false;
+        cascadeMotors.brake();
+    }
 }
 
 void Autons::waitUntilLiftDone() {
@@ -100,21 +121,25 @@ void Autons::testAuton() {
     
     //LAteral test
     chassis->moveToPoint(0, 24, 2000, {.forwards = false, .maxSpeed = 127});
+    chassis->waitUntilDone(); // moves run in the background; wait for it to finish
 
     pros::delay(500);
 
     // Backward 24"
     chassis->moveToPoint(0, 0, 2000,{.maxSpeed = 127});
+    chassis->waitUntilDone(); // moves run in the background; wait for it to finish
 
     pros::delay(500);
 
     // Forward 48"
     chassis->moveToPoint(0, 48, 3000, {.forwards = false, .maxSpeed = 127});
+    chassis->waitUntilDone(); // moves run in the background; wait for it to finish
 
     pros::delay(500);
 
     // Back to start
     chassis->moveToPoint(0, 0, 3000,{.maxSpeed = 127});
+    chassis->waitUntilDone(); // moves run in the background; wait for it to finish
 
     pros::delay(800);
     
@@ -136,23 +161,30 @@ toggle_motor.move(127);
 pros::delay(300);
 toggle_motor.move(0);
 
-chassis->moveToPoint(-52.929, -19, 700, {.maxSpeed = 90}, true); // move to goal and wait
+chassis->moveToPoint(-52.929, -19, 700, {.maxSpeed = 100}, true); // move to goal and wait
 liftTo(700);
-pros::delay(100);
+pros::delay(300);
 liftTo(0);
 Claw.set_value(true); // open claw to score
 // //score preload
 pros::delay(100);
 chassis->moveToPoint(-58.929, 0, 600, {.forwards = false}, false);
 
-chassis->turnToPoint(-23,-36,1000,{},false);// turn toward cup
-chassis->moveToPoint(-23-20,-36+20,1000,{},false);//go to cup
+chassis->turnToPoint(-23,-34,1000,{},false);// turn toward cup
+chassis->moveToPoint(-23-20,-34+20,800,{},false);//go to cup
+chassis->moveToPoint(-23-20+9,-34+20-9,700,{.maxSpeed = 60},true);//go to cup
+pros::delay(500);
+Claw.set_value(false);
+pros::delay(100);
+liftTo(1200);
+chassis->turnToPoint(-44.3,-24.1,500,{},false);
+chassis->moveToPoint(-44.3-5,-24.1,500,{},false);
+liftTo(300);
+Claw.set_value(true);
+liftTo(0);
+chassis->moveToPoint(-25.6, -16.7, 600, {.forwards = false}, false);
 
 
-// chassis->moveToPoint(-27.674, -23.575, 5000); // drive to cup
-// Claw.set_value(true); // close claw to pick up cup
-// //pick up cup with claw
-// pros::delay(2000);
 // cascadeMotors.move_absolute(1200, 127);//raise cascade
 // chassis->moveToPoint(-45, -23.484, 5000,{.forwards = false},false); // go back to goal
 // cascadeMotors.move_absolute(500, 127);//lower cascade
