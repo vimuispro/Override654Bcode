@@ -25,6 +25,7 @@ lemlib::TrackingWheel vertical(&verticalEnc, lemlib::Omniwheel::NEW_2, 0);
 pros::Motor intake_motor(4, pros::MotorGearset::blue);
 pros::Motor toggle_motor(-16, pros::MotorGearset::blue);
 pros::MotorGroup cascadeMotors({-14, 21, -13}, pros::MotorGearset::blue);
+pros::Motor claw_motor(8, pros::MotorGearset::blue); 
 
 // pistons
 pros::adi::DigitalOut Claw('G', true);

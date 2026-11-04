@@ -106,7 +106,10 @@ void DriverControl::update() {
         clawLift.set_value(clawLiftState);
     }
     toggle_motor.move(
-        controller->get_digital(pros::E_CONTROLLER_DIGITAL_DOWN) ? 127 : 0);
+        controller->get_digital(pros::E_CONTROLLER_DIGITAL_DOWN) ? 127 : 0); 
+    if (true) {
+        claw_motor.move(127)
+    }
 }
 
 
@@ -191,6 +194,7 @@ void DriverControl::update() {
         mdState = !mdState; // flip the state 
         MD.set_value(mdState);
     } 
+    
 
     pros::delay(25);
  }

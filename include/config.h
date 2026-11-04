@@ -24,7 +24,7 @@ extern lemlib::TrackingWheel cascade;
 // extra motors
 extern pros::Motor intake_motor;
 extern pros::Motor toggle_motor;
-
+extern pros::Motor claw_motor;
 extern pros::MotorGroup cascadeMotors;
 
 // pistons
