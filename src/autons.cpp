@@ -176,7 +176,7 @@ pros::delay(300);
 toggle_motor.move(0);
 
 
-chassis->moveToPoint(-52.929, -19, 700, {.maxSpeed = 100}, true); 
+chassis->moveToPoint(-53.929, -19, 800, {.maxSpeed = 127}, true); 
 // move to goal and wait
 liftTo(700); // lift cascade over goal
 pros::delay(300);
@@ -208,11 +208,18 @@ chassis->moveToPoint(-25.6, -16.7, 400, {.forwards = false}, false);
 
 chassis->turnToPoint(-48-4, -46.7, 400, {},false);//turn to cup
 chassis->moveToPoint(-48-4, -46.7, 500, {},false);//go to cup
-chassis->moveToPoint(-48-4+4, -46.7+4, 1800, {.maxSpeed = 60},false);//go to cup slowly
+chassis->moveToPoint(-48-4+1, -46.7+1, 1800, {.maxSpeed = 60},false);//go to cup slowly
+pros::delay(200);
+closeClaw();
+pros::delay(100);
+
+liftTo(2000);//lift cascade
 
 chassis->turnToPoint(-49.6, -37.9, 600, {},false);
 chassis->moveToPoint(-49.6, -37.9+5, 1000, {},false);
-
+liftTo(300);
+openClaw();
+liftTo(0);
 }
 void Autons::auton2(){
 
