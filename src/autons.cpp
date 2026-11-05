@@ -179,14 +179,14 @@ toggle_motor.move(0);
 chassis->moveToPoint(-53.929, -19, 800, {.maxSpeed = 127}, true); 
 // move to goal and wait
 liftTo(700); // lift cascade over goal
-pros::delay(300);
+pros::delay(400);
 liftTo(0);
 openClaw(); // open claw to score
 // //score preload
 pros::delay(100);
 //reverse from the goal
 chassis->moveToPoint(-58.929, 0, 600, {.forwards = false}, false);
-
+/*
 chassis->turnToPoint(-23,-34,1000,{},false);// turn toward cup
 chassis->moveToPoint(-23-20,-34+20,800,{},false);//go to cup
 chassis->moveToPoint(-23-20+9,-34+20-9,700,{.maxSpeed = 60},true);//go to cup slowly
@@ -220,6 +220,7 @@ chassis->moveToPoint(-49.6, -37.9+5, 1000, {},false);
 liftTo(300);
 openClaw();
 liftTo(0);
+*/
 }
 void Autons::auton2(){
 
