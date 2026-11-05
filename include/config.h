@@ -28,7 +28,6 @@ extern pros::Motor claw_motor;
 extern pros::MotorGroup cascadeMotors;
 
 // pistons
-extern pros::adi::DigitalOut Claw;
 extern pros::adi::DigitalOut clawLift; // piston that moves the claw up/down
 
 

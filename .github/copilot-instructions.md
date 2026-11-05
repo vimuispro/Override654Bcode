@@ -2,7 +2,7 @@
 
 ## Architecture
 - This is a PROS V5 C++ robot project using LemLib for drivetrain odometry and motion planning.
-- `include/config.h` and `src/config.cpp` are the source of truth for robot-wide globals: controller, motor groups, sensors, drivetrain, and solenoids. Read these before changing subsystem behavior.
+- `include/config.h` and `src/config.cpp` are the source of truth for robot-wide globals: controller, motor groups, sensors, drivetrain, and actuators. Read these before changing subsystem behavior.
 - `src/main.cpp` owns the PROS lifecycle hooks (`initialize`, `opcontrol`, `autonomous`) and picks the selected auton using `selectedAuton`.
 - `src/driver.cpp` is the operator-control layer; it reads controller inputs and drives intake/cascade/claw behavior directly.
 - `src/autons.cpp` contains autonomous path logic and issue commands on `lemlib::Chassis` (`turnToHeading`, `moveToPoint`, etc.).
@@ -18,7 +18,7 @@
 ## Project-specific conventions
 - Keep hardware configuration centralized in `config.*` instead of repeating motor/sensor definitions across files.
 - Reuse the existing global names (`controller`, `leftMotors`, `rightMotors`, `chassis`, `selectedAuton`, `driverControlEnabled`) instead of creating parallel state.
-- Solenoids use uppercase names like `Claw` and `toggle`; they are toggled with `get_digital_new_press` patterns.
+- The claw is controlled by `claw_motor` through the open/close helpers in `Autons`; `clawLift` remains a piston toggled with `get_digital_new_press`.
 - Auton selection is enum-based in `include/ui.h`; button callbacks in `src/ui.cpp` update `selectedAuton`.
 - Prefer direct LemLib commands on the existing `chassis` object over custom wrappers unless a new behavior is genuinely shared across multiple autons.
 - The project is still evolving: `Autons::lift`, `Autons::score`, `skillsAuton`, and several auton stubs are placeholders, so do not assume all commands are implemented yet.

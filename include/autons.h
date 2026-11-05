@@ -17,6 +17,8 @@ public:
     void stopLift();                                           // cancel a lift move that's still running
     double liftHeight();
     void score(bool on);
+    void openClaw();
+    void closeClaw();
 
     void testAuton();      
     void skillsAuton(); 

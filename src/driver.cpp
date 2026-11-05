@@ -16,7 +16,7 @@ void DriverControl::startPeriod() {
 void DriverControl::update() {
     static bool drivetrainReversed = false; // drive motors are fixed in config.cpp, so no flip needed
     static bool cascadeMacroRunning = false;
-    static bool claw = true; // true = closed, matches the starting state of Claw in config.cpp
+    static bool clawClosed = true;
     static bool clawLiftState = true; // matches the starting state of clawLift in config.cpp
     if (controller->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_LEFT)) {
         drivetrainReversed = !drivetrainReversed;
@@ -62,8 +62,8 @@ void DriverControl::update() {
     cascadeVal = cascadeEnc.get_position() / 100.0;
     
     if (controller->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
-        claw = false; // Y macro opens the claw (false = open)
-        Claw.set_value(claw);
+        clawClosed = false;
+        autons.openClaw(); // Y macro opens the claw
         cascadeMacroRunning = cascadeVal > 0;
     }
 
@@ -97,8 +97,12 @@ void DriverControl::update() {
     pros::delay(25);
 
     if (controller->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
-        claw = !claw; // A opens/closes the claw
-        Claw.set_value(claw);
+        clawClosed = !clawClosed;
+        if (clawClosed) {
+            autons.closeClaw();
+        } else {
+            autons.openClaw();
+        }
     }
 
     if (controller->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
@@ -108,12 +112,6 @@ void DriverControl::update() {
     toggle_motor.move(
         controller->get_digital(pros::E_CONTROLLER_DIGITAL_DOWN) ? 127 : 0); 
 
-    if (controller->get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
-        claw_motor.move(-127);
-    }
-    else {
-        claw_motor.move(0);
-    }
 }
 
 
