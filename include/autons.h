@@ -1,6 +1,8 @@
 #pragma once
+#include <cstdint>
 #include "lemlib/api.hpp"
 #include "pros/misc.hpp"
+#include "pros/rtos.hpp"
 
 class Autons {
 public:
@@ -19,6 +21,8 @@ public:
     void score(bool on);
     void openClaw();
     void closeClaw();
+    void startOpeningClaw();
+    void startClosingClaw();
 
     void testAuton();      
     void skillsAuton(); 
@@ -31,4 +35,11 @@ public:
 
 private:
     lemlib::Chassis* chassis;
+    pros::Mutex clawMutex;
+    bool clawMoving = false;
+    bool clawTaskStarted = false;
+    std::uint32_t clawMoveStartTime = 0;
+
+    void startClawMove(int power);
+    void updateClaw();
 };

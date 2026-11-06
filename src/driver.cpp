@@ -63,7 +63,7 @@ void DriverControl::update() {
     
     if (controller->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
         clawClosed = false;
-        autons.openClaw(); // Y macro opens the claw
+        autons.startOpeningClaw(); // Y macro opens the claw
         cascadeMacroRunning = cascadeVal > 0;
     }
 
@@ -99,9 +99,9 @@ void DriverControl::update() {
     if (controller->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
         clawClosed = !clawClosed;
         if (clawClosed) {
-            autons.closeClaw();
+            autons.startClosingClaw();
         } else {
-            autons.openClaw();
+            autons.startOpeningClaw();
         }
     }
 
