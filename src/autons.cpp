@@ -196,7 +196,73 @@ void Autons::testAuton() {
 
 
 void Autons::skillsAuton(){
+resetLift();
+closeClaw(); // close claw to hold preload
+chassis->setPose(-68.039, -0.62, 90);// start facing center
 
+//rotate toggle
+toggle_motor.move(127);
+pros::delay(300);
+toggle_motor.move(0);
+
+
+chassis->moveToPoint(-53.929, -19, 600, {.maxSpeed = 110}, true); 
+// move to goal and wait
+
+liftTo(700); // lift cascade over goal
+pros::delay(300);
+liftTo(0);
+pros::delay(50);
+openClaw(); // open claw to score
+// //score preload
+pros::delay(100);
+//reverse from the goal
+chassis->moveToPoint(-58.929, 0, 600, {.forwards = false}, false);
+
+chassis->turnToPoint(-32.5,-22.9,1000,{},false);// turn toward cup
+chassis->moveToPoint(-37,-18.7,800,{},false);//go to cup
+chassis->moveToPoint(-37,-18.7,800,{.maxSpeed = 30},true);//go to cup slowly
+
+pros::delay(100);
+closeClaw();//close the claw
+pros::delay(100);
+
+liftTo(1200);//lift cascade
+//turn to goal
+chassis->turnToPoint(-44.3,-24.1,500,{},false);
+chassis->moveToPoint(-44.3-5,-24.1,1000,{.maxSpeed = 90},false);
+//lower cascade
+liftTo(300);
+openClaw();
+liftTo(0);
+//reveres from the goal
+chassis->moveToPoint(-25.6, -16.7, 400, {.forwards = false}, false);
+
+chassis->turnToPoint(-51, -42.8, 400, {},false);//turn to cup
+
+chassis->moveToPoint(-51, -42.8, 500, {},false);//go to cup
+chassis->moveToPoint(-51, -42.8, 1000, {.maxSpeed = 50},true);//go to cup slowly
+
+pros::delay(600);
+closeClaw();
+pros::delay(100);
+
+liftTo(2000);//lift cascade
+
+chassis->turnToPoint(-50.3, -30.8, 600, {},false);
+chassis->moveToPoint(-50.3, -30.8, 1000, {},false);
+liftTo(300);
+openClaw();
+liftTo(0);
+chassis->moveToPoint(-41.9, -60.5, 400, {.forwards = false}, false);
+chassis->turnToPoint(-64.4, -56.9, 400, {},false);//turn to cup
+chassis->moveToPoint(-63.4, -56.9, 500, {},false);//go to cup
+pros::delay(500);
+closeClaw();
+chassis->moveToPoint(-41.9, -60.5, 400, {.forwards = false}, false);
+chassis->turnToPoint(-50.3, -30.8, 600, {},false);
+liftTo(700);//lift cascade
+chassis->moveToPoint(-50.3, -30.8, 1000, {},false);
 
 }
 void Autons::auton1(){

@@ -264,8 +264,8 @@ const char* seenColorName() {
     const double saturation = colorSensor.get_saturation();
 
     if (proximity < 0 || hue < 0 || saturation < 0) return "Error";
-    if (proximity < 80 || saturation < 0.2) return "None";
-    if (hue >= 190 && hue <= 260) return "Blue";
+    if (proximity < 80 || saturation < 0.1) return "None";
+    if (hue >= 170 && hue <= 260) return "Blue";
     if (hue <= 30 || hue >= 330) return "Red";
     if (hue >= 40 && hue <= 80) return "Yellow";
     return "Other";
