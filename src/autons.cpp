@@ -223,18 +223,18 @@ pros::delay(100);
 //reverse from the goal
 chassis->moveToPoint(-58.929, 0, 600, {.forwards = false}, false);
 
-chassis->turnToPoint(-32.5+1,-22.9+1,1000,{},false);// turn toward cup
-chassis->moveToPoint(-32.5-3+1,-22.9+3+1,1000,{},false);//go to cup
-chassis->moveToPoint(-32.5+1,-22.9+1,500,{.maxSpeed = 30},true);//go to cup slowly
+chassis->turnToPoint(-32.5,-22.9,1000,{},false);// turn toward cup
+chassis->moveToPoint(-37,-18.7,800,{},false);//go to cup
+chassis->moveToPoint(-37,-18.7,800,{.maxSpeed = 30},true);//go to cup slowly
 
-pros::delay(300);
+pros::delay(100);
 closeClaw();//close the claw
 pros::delay(100);
 
 liftTo(1200);//lift cascade
 //turn to goal
 chassis->turnToPoint(-44.3,-24.1,500,{},false);
-chassis->moveToPoint(-44.3-5,-24.1,400,{.maxSpeed = 90},false);
+chassis->moveToPoint(-44.3-5,-24.1,1000,{.maxSpeed = 90},false);
 //lower cascade
 liftTo(300);
 openClaw();
@@ -242,22 +242,23 @@ liftTo(0);
 //reveres from the goal
 chassis->moveToPoint(-25.6, -16.7, 400, {.forwards = false}, false);
 
-chassis->turnToPoint(-43.5, -44.7, 400, {},false);//turn to cup
-/*
-chassis->moveToPoint(-43.5, -44.7, 500, {},false);//go to cup
-chassis->moveToPoint(-43.5, -44.7, 1800, {.maxSpeed = 60},false);//go to cup slowly
-pros::delay(100);
+chassis->turnToPoint(-51, -42.8, 400, {},false);//turn to cup
+
+chassis->moveToPoint(-51, -42.8, 500, {},false);//go to cup
+chassis->moveToPoint(-51, -42.8, 1000, {.maxSpeed = 50},true);//go to cup slowly
+
+pros::delay(600);
 closeClaw();
 pros::delay(100);
 
 liftTo(2000);//lift cascade
 
-chassis->turnToPoint(-49.6, -37.9, 600, {},false);
-chassis->moveToPoint(-49.6, -37.9+5, 1000, {},false);
+chassis->turnToPoint(-50.3, -30.8, 600, {},false);
+chassis->moveToPoint(-50.3, -30.8, 1000, {},false);
 liftTo(300);
 openClaw();
 liftTo(0);
-*/
+
 }
 void Autons::auton2(){
 
