@@ -4,7 +4,6 @@
 #include "autons.h"
 #include "ui.h"
 #include "main.h"
-#include <cstring>
 
 extern Autons autons;
 
@@ -13,7 +12,8 @@ DriverControl::DriverControl(pros::Controller* controller, lemlib::Chassis* chas
 
 void DriverControl::startPeriod() {
     cascadeLimiterEnabled = false;
-    toggleActive = true;
+    driverControlEnabled = true;
+    toggle_motor.move(0);
 }
 
 void DriverControl::update() {
@@ -112,16 +112,8 @@ void DriverControl::update() {
         clawLiftState = !clawLiftState; // B moves the claw up/down
         clawLift.set_value(clawLiftState);
     }
-    if (controller->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
-        toggleActive = !toggleActive;
-    }
-
-    const char* targetColor = isBlueTeam ? "Blue" : "Red";
-    const bool targetColorDetected = std::strcmp(seenColorName(), targetColor) == 0;
     toggle_motor.move(
-        toggleActive && !targetColorDetected
-            ? 127
-            : 0);
+        controller->get_digital(pros::E_CONTROLLER_DIGITAL_DOWN) ? 127 : 0);
 
 }
 

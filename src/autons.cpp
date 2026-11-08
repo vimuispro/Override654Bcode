@@ -150,47 +150,24 @@ void Autons::updateClaw() {
 
 
 void Autons::testAuton() {
-   
-    //angular test
-    //chassis->turnToHeading(90, 1500);
-    //pros::delay(500);
+    resetLift();
+    closeClaw(); // close claw to hold preload
+    chassis->setPose( -0.62, -68.039, 90);// start facing center
 
-    // Back to 0°
-    //chassis->turnToHeading(0, 1500);
-    //pros::delay(500);
-
-    // 180°
-    //chassis->turnToHeading(180, 2000);
-    //pros::delay(500);
-
-    // Back to 0°
-    //chassis->turnToHeading(0, 2000);
-    
-    
-    //LAteral test
-    chassis->moveToPoint(0, 24, 2000, {.forwards = false, .maxSpeed = 127});
-    chassis->waitUntilDone(); // moves run in the background; wait for it to finish
-
+    //rotate toggle
+    toggle_motor.move(127);
     pros::delay(500);
-
-    // Backward 24"
-    chassis->moveToPoint(0, 0, 2000,{.maxSpeed = 127});
-    chassis->waitUntilDone(); // moves run in the background; wait for it to finish
-
-    pros::delay(500);
-
-    // Forward 48"
-    chassis->moveToPoint(0, 48, 3000, {.forwards = false, .maxSpeed = 127});
-    chassis->waitUntilDone(); // moves run in the background; wait for it to finish
-
-    pros::delay(500);
-
-    // Back to start
-    chassis->moveToPoint(0, 0, 3000,{.maxSpeed = 127});
-    chassis->waitUntilDone(); // moves run in the background; wait for it to finish
-
-    pros::delay(800);
-    
+    toggle_motor.move(0);
+    chassis->moveToPoint(14, -52.7+4, 1000, {.maxSpeed = 110}, true);
+    liftTo(700); // lift cascade over goal
+    pros::delay(300);
+    liftTo(0);
+    pros::delay(50);
+    openClaw(); // open claw to score
+    // //score preload
+   chassis->moveToPoint(10, -54.8, 500, {.maxSpeed = 110}, true);
+    //reverse from the goal
+    //chassis->moveToPoint(19, -68, 600, {.forwards = false}, false);
 }
 
 
@@ -202,14 +179,14 @@ chassis->setPose(-68.039, -0.62, 90);// start facing center
 
 //rotate toggle
 toggle_motor.move(127);
-pros::delay(300);
+pros::delay(400);
 toggle_motor.move(0);
 
 
-chassis->moveToPoint(-53.929, -19, 600, {.maxSpeed = 110}, true); 
+chassis->moveToPoint(-53.929, -19, 600, {.maxSpeed = 90}, true); 
 // move to goal and wait
 
-liftTo(700); // lift cascade over goal
+liftTo(1500); // lift cascade over goal
 pros::delay(300);
 liftTo(0);
 pros::delay(50);
@@ -220,19 +197,19 @@ pros::delay(100);
 chassis->moveToPoint(-58.929, 0, 600, {.forwards = false}, false);
 
 chassis->turnToPoint(-32.5,-22.9,1000,{},false);// turn toward cup
-chassis->moveToPoint(-37,-18.7,800,{},false);//go to cup
+chassis->moveToPoint(-37+1,-18.7-1,800,{},false);//go to cup
 chassis->moveToPoint(-37,-18.7,800,{.maxSpeed = 30},true);//go to cup slowly
 
 pros::delay(100);
 closeClaw();//close the claw
 pros::delay(100);
 
-liftTo(1200);//lift cascade
+liftTo(2000);//lift cascade
 //turn to goal
 chassis->turnToPoint(-44.3,-24.1,500,{},false);
 chassis->moveToPoint(-44.3-5,-24.1,1000,{.maxSpeed = 90},false);
 //lower cascade
-liftTo(300);
+liftTo(700);
 openClaw();
 liftTo(0);
 //reveres from the goal
@@ -247,22 +224,17 @@ pros::delay(600);
 closeClaw();
 pros::delay(100);
 
-liftTo(2000);//lift cascade
+liftTo(2800);//lift cascade
 
 chassis->turnToPoint(-50.3, -30.8, 600, {},false);
 chassis->moveToPoint(-50.3, -30.8, 1000, {},false);
-liftTo(300);
+liftTo(700);
 openClaw();
 liftTo(0);
-chassis->moveToPoint(-41.9, -60.5, 400, {.forwards = false}, false);
-chassis->turnToPoint(-64.4, -56.9, 400, {},false);//turn to cup
-chassis->moveToPoint(-63.4, -56.9, 500, {},false);//go to cup
-pros::delay(500);
-closeClaw();
-chassis->moveToPoint(-41.9, -60.5, 400, {.forwards = false}, false);
-chassis->turnToPoint(-50.3, -30.8, 600, {},false);
-liftTo(700);//lift cascade
-chassis->moveToPoint(-50.3, -30.8, 1000, {},false);
+chassis->moveToPoint(-47.4, -42.8, 1000, {.forwards = false},false);
+chassis->turnToPoint(-11.3, -9.7, 600, {},false);
+chassis->moveToPoint(-11.3, -9.7, 1000, {},false);
+
 
 }
 void Autons::auton1(){
@@ -272,14 +244,14 @@ chassis->setPose(-68.039, -0.62, 90);// start facing center
 
 //rotate toggle
 toggle_motor.move(127);
-pros::delay(300);
+pros::delay(400);
 toggle_motor.move(0);
 
 
-chassis->moveToPoint(-53.929, -19, 600, {.maxSpeed = 110}, true); 
+chassis->moveToPoint(-53.929, -19, 600, {.maxSpeed = 90}, true); 
 // move to goal and wait
 
-liftTo(700); // lift cascade over goal
+liftTo(1500); // lift cascade over goal
 pros::delay(300);
 liftTo(0);
 pros::delay(50);
@@ -290,19 +262,19 @@ pros::delay(100);
 chassis->moveToPoint(-58.929, 0, 600, {.forwards = false}, false);
 
 chassis->turnToPoint(-32.5,-22.9,1000,{},false);// turn toward cup
-chassis->moveToPoint(-37,-18.7,800,{},false);//go to cup
+chassis->moveToPoint(-37+1,-18.7-1,800,{},false);//go to cup
 chassis->moveToPoint(-37,-18.7,800,{.maxSpeed = 30},true);//go to cup slowly
 
 pros::delay(100);
 closeClaw();//close the claw
 pros::delay(100);
 
-liftTo(1200);//lift cascade
+liftTo(2000);//lift cascade
 //turn to goal
 chassis->turnToPoint(-44.3,-24.1,500,{},false);
 chassis->moveToPoint(-44.3-5,-24.1,1000,{.maxSpeed = 90},false);
 //lower cascade
-liftTo(300);
+liftTo(700);
 openClaw();
 liftTo(0);
 //reveres from the goal
@@ -315,21 +287,36 @@ chassis->moveToPoint(-51, -42.8, 1000, {.maxSpeed = 50},true);//go to cup slowly
 
 pros::delay(600);
 closeClaw();
-pros::delay(100);
+2pros::delay(100);
 
-liftTo(2000);//lift cascade
+liftTo(2800);//lift cascade
 
 chassis->turnToPoint(-50.3, -30.8, 600, {},false);
 chassis->moveToPoint(-50.3, -30.8, 1000, {},false);
-liftTo(300);
+liftTo(700);
 openClaw();
 liftTo(0);
 
 }
 void Autons::auton2(){
 
+/*
+chassis->moveToPoint(-19, -53.929, 600, {.maxSpeed = 90}, true); 
+// move to goal and wait
 
-
+liftTo(1500); // lift cascade over goal
+pros::delay(300);
+liftTo(0);
+pros::delay(50);
+openClaw(); // open claw to score
+// //score preload
+pros::delay(100);
+//reverse from the goal
+chassis->moveToPoint(-58.929, 0, 600, {.forwards = false}, false);
+*/
+chassis->cancelAllMotions();
+chassis->arcade(0, 0);
+driverControlEnabled = true;
 }
 void Autons::auton3(){
     

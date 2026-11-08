@@ -14,5 +14,4 @@ private:
     pros::Controller* controller;
     lemlib::Chassis* chassis;
     bool cascadeLimiterEnabled = false;
-    bool toggleActive = false;
 };
