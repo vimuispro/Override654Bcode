@@ -301,14 +301,27 @@ void Autons::auton2(){
 
 resetLift();
 closeClaw(); // close claw to hold preload
+
 chassis->setPose(-61.648, -0.646, 90);
+
+toggle(2);
+liftTo(400);
+
 chassis->moveToPoint(-46.2, -8.6, 5000,{.minSpeed = 110},false);
 chassis->moveToPoint(-47.071, -18.193, 5000,{.minSpeed = 100},false);
-//liftTo(400); // lift cascade over goal
+ 
 chassis->tank(127,50,true);
 pros::delay(1000);
 chassis->tank(0,0,true);
-//liftTo(0);
+
+
+chassis->moveTo(-47.183, -9.318, 5000);
+chassis->moveTo(-28.478, -20.31, 5000);
+chassis->moveTo(-40.434, -23.781, 5000);
+chassis->moveTo(-29.249, -24.166, 5000);
+chassis->moveTo(-42.555, -41.714, 5000);
+chassis->moveTo(-47.183, -29.18, 5000);
+
 
 }
 void Autons::auton3(){
