@@ -18,7 +18,7 @@ public:
     void waitUntilLiftDone();
     void stopLift();                                           // cancel a lift move that's still running
     double liftHeight();
-    void score(bool on);
+    void toggle(int rotations);
     void openClaw();
     void closeClaw();
     void startOpeningClaw();

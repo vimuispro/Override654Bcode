@@ -13,13 +13,18 @@ pros::MotorGroup rightMotors({-5, 1}, pros::MotorGearset::blue);
 // sensors
 pros::Imu imu(7);
 pros::Rotation verticalEnc(2); // keep POSITIVE
-pros::Rotation cascadeEnc(12);
+pros::Rotation cascadeEnc(-12);
 pros::Optical colorSensor(20);
 double cascadeVal = 0.0;
 bool isBlueTeam = true;
 
 // tracking wheels
-lemlib::TrackingWheel vertical(&verticalEnc, lemlib::Omniwheel::NEW_2, 0);
+lemlib::TrackingWheel vertical(
+    &verticalEnc,              // V5 rotation sensor
+    lemlib::Omniwheel::NEW_2,  // 2-inch tracking wheel diameter
+    0.6,                       // offset from the tracking center, in inches
+    1.0                        // gear ratio (1:1)
+);
 
 // extra motors
 pros::Motor intake_motor(4, pros::MotorGearset::blue);
@@ -33,13 +38,19 @@ pros::adi::DigitalOut clawLift('H', true); // piston that moves the claw up/down
 bool driverControlEnabled = true;
 
 // drivetrain + chassis
-lemlib::Drivetrain drivetrain(&leftMotors, &rightMotors, 11.425,
-                              lemlib::Omniwheel::NEW_275, 450, 2);
+lemlib::Drivetrain drivetrain(
+        &leftMotors,
+        &rightMotors,
+        11.25,
+        lemlib::Omniwheel::NEW_275,
+        450,
+        2
+);
 
 lemlib::ControllerSettings linearController(
     12,  // Proportional gain (kP)
     0,   // Integral gain (kI), disabled
-    40,  // Derivative gain (kD)
+    110,  // Derivative gain (kD)
     3,   // Integral anti-windup error range, in inches
     1,   // Small-error range, in inches
     100, // Time to remain within the small-error range before settling, in milliseconds
@@ -50,7 +61,7 @@ lemlib::ControllerSettings linearController(
 lemlib::ControllerSettings angularController(
     5,    // Proportional gain (kP)
     0.00, // Integral gain (kI), disabled
-    36,   // Derivative gain (kD)
+    45,   // Derivative gain (kD)
     3,    // Integral anti-windup error range, in degrees
     1.5,  // Small-error range, in degrees
     100,  // Time to remain within the small-error range before settling, in milliseconds

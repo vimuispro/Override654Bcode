@@ -95,9 +95,10 @@ void Autons::waitUntilLiftDone() {
     while (liftActive) pros::delay(10);
 }
 
-void Autons::score(bool on){
-    
-    
+void Autons::toggle(int rotations) {
+    toggle_motor.move(127);
+    pros::delay(200*rotations);
+    toggle_motor.move(0);
 }
 
 void Autons::openClaw() {
@@ -178,9 +179,7 @@ closeClaw(); // close claw to hold preload
 chassis->setPose(-68.039, -0.62, 90);// start facing center
 
 //rotate toggle
-toggle_motor.move(127);
-pros::delay(400);
-toggle_motor.move(0);
+toggle(2);
 
 
 chassis->moveToPoint(-53.929, -19, 600, {.maxSpeed = 90}, true); 
@@ -300,26 +299,56 @@ liftTo(0);
 }
 void Autons::auton2(){
 
-/*
-chassis->moveToPoint(-19, -53.929, 600, {.maxSpeed = 90}, true); 
-// move to goal and wait
+resetLift();
+closeClaw(); // close claw to hold preload
+chassis->setPose(-61.648, -0.646, 90);
+chassis->moveToPoint(-46.2, -8.6, 5000,{.minSpeed = 110},false);
+chassis->moveToPoint(-47.071, -18.193, 5000,{.minSpeed = 100},false);
+//liftTo(400); // lift cascade over goal
+chassis->tank(127,50,true);
+pros::delay(1000);
+chassis->tank(0,0,true);
+//liftTo(0);
 
-liftTo(1500); // lift cascade over goal
-pros::delay(300);
-liftTo(0);
-pros::delay(50);
-openClaw(); // open claw to score
-// //score preload
-pros::delay(100);
-//reverse from the goal
-chassis->moveToPoint(-58.929, 0, 600, {.forwards = false}, false);
-*/
-chassis->cancelAllMotions();
-chassis->arcade(0, 0);
-driverControlEnabled = true;
 }
 void Autons::auton3(){
+     //angular test
     
+    //chassis->turnToHeading(90, 1500);
+    //pros::delay(500);
+
+    // Back to 0°
+    //chassis->turnToHeading(0, 1500);
+    //pros::delay(500);
+
+    // 180°
+    //chassis->turnToHeading(180, 2000);
+    //pros::delay(500);
+
+    // Back to 0°
+    //chassis->turnToHeading(0, 2000);
+    
+    
+    //LAteral test
+    chassis->moveToPoint(0, 24, 2000, {.forwards = false, .maxSpeed = 127});
+    chassis->waitUntilDone(); // moves run in the background; wait for it to finish
+
+    pros::delay(500);
+
+    //Backward 24"
+    chassis->moveToPoint(0, 0, 2000,{.maxSpeed = 127});
+    chassis->waitUntilDone(); // moves run in the background; wait for it to finish
+
+    pros::delay(500);
+
+    // Forward 48"
+    chassis->moveToPoint(0, 48, 3000, {.forwards = false, .maxSpeed = 127});
+    chassis->waitUntilDone(); // moves run in the background; wait for it to 
+     
+    pros::delay(500);
+
+    chassis->moveToPoint(0, 0, 2000,{.maxSpeed = 127});
+    chassis->waitUntilDone(); 
     
 }
 
