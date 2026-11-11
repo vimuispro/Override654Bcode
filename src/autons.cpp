@@ -287,7 +287,7 @@ chassis->moveToPoint(-51, -42.8, 1000, {.maxSpeed = 50},true);//go to cup slowly
 
 pros::delay(600);
 closeClaw();
-2pros::delay(100);
+pros::delay(100);
 
 liftTo(2800);//lift cascade
 
