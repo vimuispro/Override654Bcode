@@ -7,12 +7,41 @@
 
 extern Autons autons;
 
+namespace {
+enum class DetectedColor {
+    NONE,
+    TEAM,
+    OPPONENT,
+    YELLOW
+};
+
+DetectedColor getDetectedColor() {
+    const std::int32_t proximity = colorSensor.get_proximity();
+    const double hue = colorSensor.get_hue();
+    const double saturation = colorSensor.get_saturation();
+
+    if (proximity < 80 || hue < 0 || saturation < 0.1) {
+        return DetectedColor::NONE;
+    }
+
+    const bool seesBlue = hue >= 170 && hue <= 260;
+    const bool seesRed = hue <= 30 || hue >= 330;
+    if (hue >= 40 && hue <= 80) return DetectedColor::YELLOW;
+    if (!seesBlue && !seesRed) return DetectedColor::NONE;
+
+    const bool seesTeam = isBlueTeam ? seesBlue : seesRed;
+    return seesTeam ? DetectedColor::TEAM : DetectedColor::OPPONENT;
+}
+}
+
 DriverControl::DriverControl(pros::Controller* controller, lemlib::Chassis* chassis)
     : controller(controller), chassis(chassis) {}
 
 void DriverControl::startPeriod() {
     cascadeLimiterEnabled = false;
     driverControlEnabled = true;
+    teamColorSearchActive = false;
+    togglePulseActive = false;
     toggle_motor.move(0);
 }
 
@@ -82,7 +111,7 @@ void DriverControl::update() {
         (!cascadeLimiterEnabled || cascadeVal > 0)) {
         cascadeMotors.move(127);
     } else if (controller->get_digital(pros::E_CONTROLLER_DIGITAL_R1) &&
-        (!cascadeLimiterEnabled || cascadeVal < 3000)) {
+        (!cascadeLimiterEnabled || cascadeVal < 3900)) {
         cascadeMotors.move(-127);
     } else {
         cascadeMotors.move(0);
@@ -112,8 +141,44 @@ void DriverControl::update() {
         clawLiftState = !clawLiftState; // B moves the claw up/down
         clawLift.set_value(clawLiftState);
     }
-    toggle_motor.move(
-        controller->get_digital(pros::E_CONTROLLER_DIGITAL_DOWN) ? 127 : 0);
+    const bool downHeld = controller->get_digital(pros::E_CONTROLLER_DIGITAL_DOWN);
+    if (controller->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
+        teamColorSearchActive = true;
+        togglePulseActive = false;
+    }
+
+    if (!downHeld) {
+        teamColorSearchActive = false;
+        togglePulseActive = false;
+    }
+
+    if (downHeld && teamColorSearchActive) {
+        switch (getDetectedColor()) {
+            case DetectedColor::TEAM:
+                teamColorSearchActive = false;
+                break;
+            case DetectedColor::OPPONENT:
+                teamColorSearchActive = false;
+                togglePulseActive = true;
+                togglePulseStart = pros::millis();
+                togglePulseDuration = 400;
+                break;
+            case DetectedColor::YELLOW:
+                teamColorSearchActive = false;
+                togglePulseActive = true;
+                togglePulseStart = pros::millis();
+                togglePulseDuration = 200;
+                break;
+            case DetectedColor::NONE:
+                break;
+        }
+    }
+
+    if (togglePulseActive &&
+        pros::millis() - togglePulseStart >= togglePulseDuration) {
+        togglePulseActive = false;
+    }
+    toggle_motor.move(downHeld && (teamColorSearchActive || togglePulseActive) ? 127 : 0);
 
 }
 

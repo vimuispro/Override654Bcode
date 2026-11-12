@@ -2,6 +2,7 @@
 #include "pros/misc.hpp"
 #include "pros/motors.hpp"
 #include "lemlib/api.hpp"
+#include <cstdint>
 
 class DriverControl {
 public:
@@ -14,4 +15,8 @@ private:
     pros::Controller* controller;
     lemlib::Chassis* chassis;
     bool cascadeLimiterEnabled = false;
+    bool teamColorSearchActive = false;
+    bool togglePulseActive = false;
+    std::uint32_t togglePulseStart = 0;
+    std::uint32_t togglePulseDuration = 0;
 };
