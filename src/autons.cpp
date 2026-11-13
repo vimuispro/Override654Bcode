@@ -29,6 +29,9 @@ static bool liftTaskStarted = false;
 static double liftLastHeight = 0;
 static std::uint32_t liftLastMoveTime = 0;
 
+static const int left_sensor_offset = 0; // offset in inches for the left tracking wheel
+static const int right_sensor_offset = 0; // offset in inches for the right tracking wheel
+
 void distanceReset(std::string axis, const double field_length){
   double x,y;
   if(axis == "x"){
