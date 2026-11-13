@@ -16,7 +16,8 @@ extern pros::Rotation cascadeEnc;
 extern pros::Optical colorSensor;
 extern double cascadeVal;
 extern bool isBlueTeam;
-
+extern pros::Distance left_distance;
+extern pros::Distance right_distance;
 // tracking wheels
 extern lemlib::TrackingWheel vertical;
 extern lemlib::TrackingWheel cascade;

@@ -9,7 +9,8 @@ pros::Controller controller(pros::E_CONTROLLER_MASTER);
 // is the real front and the tracking wheel (port 2, positive) agrees with the motors.
 pros::MotorGroup leftMotors({-10, 6}, pros::MotorGearset::blue);
 pros::MotorGroup rightMotors({-5, 1}, pros::MotorGearset::blue);
-
+pros::Distance left_distance(0);
+pros::Distance right_distance(0);
 // sensors
 pros::Imu imu(7);
 pros::Rotation verticalEnc(2); // keep POSITIVE
