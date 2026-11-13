@@ -23,10 +23,10 @@ public:
     void closeClaw();
     void startOpeningClaw();
     void startClosingClaw();
-
+    void distanceReset(std::string axis, const double field_length);
     void testAuton();      
     void skillsAuton(); 
-
+    
     void auton1();
     void auton2();
     void auton3();

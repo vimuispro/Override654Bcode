@@ -29,6 +29,23 @@ static bool liftTaskStarted = false;
 static double liftLastHeight = 0;
 static std::uint32_t liftLastMoveTime = 0;
 
+void distanceReset(std::string axis, const double field_length){
+  double x,y;
+  if(axis == "x"){
+    double left = left_distance.get()/25.4 + left_sensor_offset;
+    double right = right_distance.get()/25.4 + right_sensor_offset;
+    x = (left);
+    chassis.odom_xyt_set(x, chassis.odom_y_get(), chassis.odom_theta_get());
+    master.print(6, 0, "x reset -> %.2f\n", chassis.odom_x_get());
+  }
+  else if(axis == "y"){
+    double left = left_distance.get()/25.4 + left_sensor_offset;
+    double right = right_distance.get()/25.4 + right_sensor_offset;
+    y = (left);
+    chassis.odom_xyt_set(chassis.odom_x_get(), y, chassis.odom_theta_get());
+
+  }
+}
 double Autons::liftHeight() {
     return cascadeEnc.get_position() / 100.0;
 }
