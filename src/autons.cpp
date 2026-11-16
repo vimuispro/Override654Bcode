@@ -31,7 +31,7 @@ static std::uint32_t liftLastMoveTime = 0;
 
 static const int left_sensor_offset = 0; // offset in inches for the left tracking wheel
 static const int right_sensor_offset = 0; // offset in inches for the right tracking wheel
-
+/*
 void distanceReset(std::string axis, const double field_length){
   double x,y;
   if(axis == "x"){
@@ -49,6 +49,7 @@ void distanceReset(std::string axis, const double field_length){
 
   }
 }
+  */
 double Autons::liftHeight() {
     return cascadeEnc.get_position() / 100.0;
 }
@@ -325,22 +326,25 @@ closeClaw(); // close claw to hold preload
 chassis->setPose(-61.648, -0.646, 90);
 
 toggle(2);
-liftTo(400);
+liftTo(700);
 
-chassis->moveToPoint(-46.2, -8.6, 5000,{.minSpeed = 110},false);
+chassis->moveToPoint(-46.2, -8.6, 5000,{.minSpeed = 127},false);
 chassis->moveToPoint(-47.071, -18.193, 5000,{.minSpeed = 100},false);
  
-chassis->tank(127,50,true);
-pros::delay(1000);
+chassis->tank(10,127,true);
+pros::delay(500);
 chassis->tank(0,0,true);
 
+liftTo(300);
+openClaw();
+chassis->setPose(-47, -18.6, 180);
 
-chassis->moveTo(-47.183, -9.318, 5000);
-chassis->moveTo(-28.478, -20.31, 5000);
-chassis->moveTo(-40.434, -23.781, 5000);
-chassis->moveTo(-29.249, -24.166, 5000);
-chassis->moveTo(-42.555, -41.714, 5000);
-chassis->moveTo(-47.183, -29.18, 5000);
+chassis->moveToPoint(-47, -9, 5000, {.minSpeed = 100},false);
+//chassis->moveTo(-28.478, -20.31, 5000);
+//chassis->moveTo(-40.434, -23.781, 5000);
+//chassis->moveTo(-29.249, -24.166, 5000);
+//chassis->moveTo(-42.555, -41.714, 5000);
+//chassis->moveTo(-47.183, -29.18, 5000);
 
 
 }
