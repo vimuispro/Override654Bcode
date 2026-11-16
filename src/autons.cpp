@@ -326,20 +326,21 @@ closeClaw(); // close claw to hold preload
 chassis->setPose(-61.648, -0.646, 90);
 
 toggle(2);
-liftTo(700);
+liftTo(1000);
 
-chassis->moveToPoint(-46.2, -8.6, 5000,{.minSpeed = 127},false);
+chassis->moveToPoint(-46.2, -8.6, 1000,{.minSpeed = 127},true);
 chassis->moveToPoint(-47.071, -18.193, 5000,{.minSpeed = 100},false);
- 
-chassis->tank(10,127,true);
+//chassis->moveToPose(-47.071, -18.193, 180, 5000,{.minSpeed = 100},false);
+
+chassis->tank(10,100,true);
 pros::delay(500);
 chassis->tank(0,0,true);
 
-liftTo(300);
+liftTo(600);
 openClaw();
 chassis->setPose(-47, -18.6, 180);
 
-chassis->moveToPoint(-47, -9, 5000, {.minSpeed = 100},false);
+chassis->moveToPoint(-47, -9, 5000, {.forwards = false},false);
 //chassis->moveTo(-28.478, -20.31, 5000);
 //chassis->moveTo(-40.434, -23.781, 5000);
 //chassis->moveTo(-29.249, -24.166, 5000);
