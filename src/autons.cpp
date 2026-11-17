@@ -216,66 +216,56 @@ void Autons::testAuton() {
 
 
 void Autons::skillsAuton(){
+
 resetLift();
 closeClaw(); // close claw to hold preload
-chassis->setPose(-68.039, -0.62, 90);// start facing center
 
-//rotate toggle
+chassis->setPose(-61.648, -0.646, 90);
+liftTo(1000, 2000, false);
 toggle(2);
 
 
-chassis->moveToPoint(-53.929, -19, 600, {.maxSpeed = 90}, true); 
-// move to goal and wait
+chassis->moveToPoint(-46.2, -8.6, 1000,{.maxSpeed = 127, .minSpeed = 80, .earlyExitRange = 5},true);
+chassis->moveToPoint(-47.071, -18.193, 1000,{.minSpeed = 100},false);
+//chassis->moveToPose(-47.071, -18.193, 180, 5000,{.minSpeed = 100},false);
 
-liftTo(1500); // lift cascade over goal
-pros::delay(300);
-liftTo(0);
-pros::delay(50);
-openClaw(); // open claw to score
-// //score preload
-pros::delay(100);
-//reverse from the goal
-chassis->moveToPoint(-58.929, 0, 600, {.forwards = false}, false);
+chassis->tank(10,100,true);
+pros::delay(500);
+chassis->tank(0,0,true);
 
-chassis->turnToPoint(-32.5,-22.9,1000,{},false);// turn toward cup
-chassis->moveToPoint(-37+1,-18.7-1,800,{},false);//go to cup
-chassis->moveToPoint(-37,-18.7,800,{.maxSpeed = 30},true);//go to cup slowly
-
-pros::delay(100);
-closeClaw();//close the claw
-pros::delay(100);
-
-liftTo(2000);//lift cascade
-//turn to goal
-chassis->turnToPoint(-44.3,-24.1,500,{},false);
-chassis->moveToPoint(-44.3-5,-24.1,1000,{.maxSpeed = 90},false);
-//lower cascade
-liftTo(700);
+liftTo(400);
 openClaw();
-liftTo(0);
-//reveres from the goal
-chassis->moveToPoint(-25.6, -16.7, 400, {.forwards = false}, false);
+chassis->setPose(-47, -18.6, chassis->getPose().theta);
 
-chassis->turnToPoint(-51, -42.8, 400, {},false);//turn to cup
+chassis->moveToPoint(-47, 0, 2000, {.forwards = false},false);
+chassis->moveToPoint(-28.478, -20.31, 500,{.earlyExitRange = 20},true);
+chassis->moveToPoint(-27, -21, 900,{.maxSpeed = 50},false);
 
-chassis->moveToPoint(-51, -42.8, 500, {},false);//go to cup
-chassis->moveToPoint(-51, -42.8, 1000, {.maxSpeed = 50},true);//go to cup slowly
+closeClaw(); 
 
-pros::delay(600);
-closeClaw();
-pros::delay(100);
 
-liftTo(2800);//lift cascade
+chassis->moveToPoint(-25, -25, 1000,{.maxSpeed = 127, .minSpeed = 80, .earlyExitRange = 5},true);
+liftTo(1500);
+chassis->moveToPoint(-41.2, -23.8, 2000,{.minSpeed = 80},false);
+chassis->tank(10,120,true);
 
-chassis->turnToPoint(-50.3, -30.8, 600, {},false);
-chassis->moveToPoint(-50.3, -30.8, 1000, {},false);
-liftTo(700);
+liftTo(400);
 openClaw();
-liftTo(0);
-chassis->moveToPoint(-47.4, -42.8, 1000, {.forwards = false},false);
-chassis->turnToPoint(-11.3, -9.7, 600, {},false);
-chassis->moveToPoint(-11.3, -9.7, 1000, {},false);
 
+chassis->setPose(-41, -23, chassis->getPose().theta-1);
+
+chassis->moveToPoint(-28, -25, 5000,{.forwards = false},false);
+chassis->moveToPoint(-42.555, -41.714, 500,{.earlyExitRange = 20,},true);
+chassis->moveToPoint(-44, -43, 2000,{.maxSpeed = 50},false);
+
+closeClaw(); 
+
+liftTo(2000);
+chassis->turnToPoint(-47.183, -23, 1000,{},true);
+chassis->moveToPoint(-47.183, -23, 1000,{.maxSpeed = 60, .minSpeed = 50},false);
+liftTo(1000);
+openClaw();
+//auton 2 pasted end
 
 }
 void Autons::auton1(){
