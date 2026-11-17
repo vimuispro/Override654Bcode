@@ -172,24 +172,45 @@ void Autons::updateClaw() {
 
 
 void Autons::testAuton() {
-    resetLift();
-    closeClaw(); // close claw to hold preload
-    chassis->setPose( -0.62, -68.039, 90);// start facing center
+      //angular test
+    
+    //chassis->turnToHeading(90, 1500);
+    //pros::delay(500);
 
-    //rotate toggle
-    toggle_motor.move(127);
+    // Back to 0°
+    //chassis->turnToHeading(0, 1500);
+    //pros::delay(500);
+
+    // 180°
+    //chassis->turnToHeading(180, 2000);
+    //pros::delay(500);
+
+    // Back to 0°
+    //chassis->turnToHeading(0, 2000);
+    
+    
+    //LAteral test
+    /*
+    chassis->moveToPoint(0, 24, 2000, {.forwards = false, .maxSpeed = 127});
+    chassis->waitUntilDone(); // moves run in the background; wait for it to finish
+
     pros::delay(500);
-    toggle_motor.move(0);
-    chassis->moveToPoint(14, -52.7+4, 1000, {.maxSpeed = 110}, true);
-    liftTo(700); // lift cascade over goal
-    pros::delay(300);
-    liftTo(0);
-    pros::delay(50);
-    openClaw(); // open claw to score
-    // //score preload
-   chassis->moveToPoint(10, -54.8, 500, {.maxSpeed = 110}, true);
-    //reverse from the goal
-    //chassis->moveToPoint(19, -68, 600, {.forwards = false}, false);
+
+    //Backward 24"
+    chassis->moveToPoint(0, 0, 2000,{.maxSpeed = 127});
+    chassis->waitUntilDone(); // moves run in the background; wait for it to finish
+
+    pros::delay(500);
+
+    // Forward 48"
+    chassis->moveToPoint(0, 48, 3000, {.forwards = false, .maxSpeed = 127});
+    chassis->waitUntilDone(); // moves run in the background; wait for it to 
+     
+    pros::delay(500);
+
+    chassis->moveToPoint(0, 0, 2000,{.maxSpeed = 127});
+    chassis->waitUntilDone(); 
+    */
 }
 
 
@@ -258,6 +279,70 @@ chassis->moveToPoint(-11.3, -9.7, 1000, {},false);
 
 }
 void Autons::auton1(){
+
+}
+void Autons::auton2(){
+
+resetLift();
+closeClaw(); // close claw to hold preload
+
+chassis->setPose(-61.648, -0.646, 90);
+liftTo(1000, 2000, false);
+toggle(2);
+
+
+chassis->moveToPoint(-46.2, -8.6, 1000,{.maxSpeed = 127, .minSpeed = 80, .earlyExitRange = 5},true);
+chassis->moveToPoint(-47.071, -18.193, 1000,{.minSpeed = 100},false);
+//chassis->moveToPose(-47.071, -18.193, 180, 5000,{.minSpeed = 100},false);
+
+chassis->tank(10,100,true);
+pros::delay(500);
+chassis->tank(0,0,true);
+
+liftTo(400);
+openClaw();
+chassis->setPose(-47, -18.6, chassis->getPose().theta);
+
+chassis->moveToPoint(-47, 0, 2000, {.forwards = false},false);
+chassis->moveToPoint(-28.478, -20.31, 500,{.earlyExitRange = 20},true);
+chassis->moveToPoint(-27, -21, 900,{.maxSpeed = 50},false);
+
+closeClaw(); 
+
+
+chassis->moveToPoint(-25, -25, 1000,{.maxSpeed = 127, .minSpeed = 80, .earlyExitRange = 5},true);
+liftTo(1500);
+chassis->moveToPoint(-41.2, -23.8, 2000,{.minSpeed = 80},false);
+chassis->tank(10,120,true);
+
+liftTo(400);
+openClaw();
+
+chassis->setPose(-41, -23, chassis->getPose().theta-1);
+
+chassis->moveToPoint(-28, -25, 5000,{.forwards = false},false);
+chassis->moveToPoint(-42.555, -41.714, 500,{.earlyExitRange = 20,},true);
+chassis->moveToPoint(-44, -43, 2000,{.maxSpeed = 50},false);
+
+closeClaw(); 
+
+liftTo(2000);
+chassis->turnToPoint(-47.183, -23, 1000,{},true);
+chassis->moveToPoint(-47.183, -23, 1000,{.maxSpeed = 60, .minSpeed = 50},false);
+liftTo(1000);
+openClaw();
+
+}
+void Autons::auton3(){
+  
+    
+}
+
+
+//--------------------
+//Old Stuff---------
+//--------------------
+/*
 resetLift();
 closeClaw(); // close claw to hold preload
 chassis->setPose(-68.039, -0.62, 90);// start facing center
@@ -316,209 +401,6 @@ chassis->moveToPoint(-50.3, -30.8, 1000, {},false);
 liftTo(700);
 openClaw();
 liftTo(0);
-
-}
-void Autons::auton2(){
-
-resetLift();
-closeClaw(); // close claw to hold preload
-
-chassis->setPose(-61.648, -0.646, 90);
-
-toggle(2);
-liftTo(1000);
-
-chassis->moveToPoint(-46.2, -8.6, 1000,{.minSpeed = 127},true);
-chassis->moveToPoint(-47.071, -18.193, 5000,{.minSpeed = 100},false);
-//chassis->moveToPose(-47.071, -18.193, 180, 5000,{.minSpeed = 100},false);
-
-chassis->tank(10,100,true);
-pros::delay(500);
-chassis->tank(0,0,true);
-
-liftTo(600);
-openClaw();
-chassis->setPose(-47, -18.6, 180);
-
-chassis->moveToPoint(-47, -9, 5000, {.forwards = false},false);
-//chassis->moveTo(-28.478, -20.31, 5000);
-//chassis->moveTo(-40.434, -23.781, 5000);
-//chassis->moveTo(-29.249, -24.166, 5000);
-//chassis->moveTo(-42.555, -41.714, 5000);
-//chassis->moveTo(-47.183, -29.18, 5000);
-
-
-}
-void Autons::auton3(){
-     //angular test
-    
-    //chassis->turnToHeading(90, 1500);
-    //pros::delay(500);
-
-    // Back to 0°
-    //chassis->turnToHeading(0, 1500);
-    //pros::delay(500);
-
-    // 180°
-    //chassis->turnToHeading(180, 2000);
-    //pros::delay(500);
-
-    // Back to 0°
-    //chassis->turnToHeading(0, 2000);
-    
-    
-    //LAteral test
-    chassis->moveToPoint(0, 24, 2000, {.forwards = false, .maxSpeed = 127});
-    chassis->waitUntilDone(); // moves run in the background; wait for it to finish
-
-    pros::delay(500);
-
-    //Backward 24"
-    chassis->moveToPoint(0, 0, 2000,{.maxSpeed = 127});
-    chassis->waitUntilDone(); // moves run in the background; wait for it to finish
-
-    pros::delay(500);
-
-    // Forward 48"
-    chassis->moveToPoint(0, 48, 3000, {.forwards = false, .maxSpeed = 127});
-    chassis->waitUntilDone(); // moves run in the background; wait for it to 
-     
-    pros::delay(500);
-
-    chassis->moveToPoint(0, 0, 2000,{.maxSpeed = 127});
-    chassis->waitUntilDone(); 
-    
-}
-
-
-
-
-
-
-
-/*
-
-
-//-------------RIGHT HALF--------------------------
-        //------long goal------//
-            
-            chassis->setPose(-47,-2,0);
-            front_motor.move(127);
-            chassis->moveToPoint(-47,10,900,{.maxSpeed = 100},false);
-            chassis->moveToPoint(-47,-47,1400,{.forwards = false, .maxSpeed = 95},false);//infront loader
-            ML.set_value(true);
-            chassis->turnToHeading(270,600,{},false);//turn toward loader
-            chassis->moveToPoint(-65,-47,1600,{.maxSpeed = 95},true);//go to loader
-
-            load();
-            front_motor.move(127);
-
-            chassis->moveToPoint(-32,-47,600,{.forwards = false,.maxSpeed = 95},true);//go back
-            
-            pros::delay(1000);
-            long_score(1000);//score, issue with time
-            ML.set_value(false);
-            chassis->setPose(-30,-47,270);
-
-
-        //------middle blocks------//
-        
-            chassis->moveToPoint(-40,-47,300,{.maxSpeed = 90},false);//move back a little bit
-            chassis->turnToHeading(15,500,{},false);// turn toward blocks
-            chassis->moveToPoint(-23,-25,1000 ,{.maxSpeed = 85} , true);//go to blocks
-            
-            pros::delay(500);
-            collect(true);//intake,fix this
-            chassis->moveToPoint(-23,22,1300 ,{.maxSpeed = 95} , true);
-            collect(false);
-            front_motor.move(127);
-            pros::delay(900);
-            collect(true);
-            //chassis->setPose(-23,11,chassis->getPose().theta);
-
-
-            chassis->turnToHeading(315,700,{},false);
-            chassis->moveToPoint(-10,10,900,{.forwards = false,.maxSpeed = 85},false);//go to middle goal
-            chassis->setPose(-7,7,315);//reset pose
-            middle_score(1000);//score
-            chassis->moveToPoint(-45,47,700,{.maxSpeed = 85},false);
-
-    //--------LEFT HALF---------------
-    //Code is def co pilot
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- //long goal
-    chassis->setPose(-47,18.7+2,0);
-    chassis->moveToPoint(-47,52,1000,{.maxSpeed = 85},false);//infront loader
-    ML.set_value(true);
-    chassis->turnToHeading(270,600,{},false);//turn toward loader
-    chassis->moveToPoint(-60,52,900,{.maxSpeed = 80},true);//go to loader
-
-    load();
-    front_motor.move(127);
-    
-    chassis->moveToPoint(-20,52,500,{.forwards = false,.maxSpeed = 85},true);//go back
-    
-    pros::delay(1000);
-    long_score(1000);//score, issue with time
-    ML.set_value(false);
-    
-    //middle goal
-    chassis->moveToPoint(-38,52,300,{.maxSpeed = 90},false);//move back a little bit
-    chassis->turnToHeading(150,500,{},false);// turn toward blocks
-    chassis->moveToPoint(-22+8,22.6,1000 ,{.maxSpeed = 85} , true);//go to blocks
-    pros::delay(500);
-    collect(true);//intake,fix this
-    chassis->turnToHeading(315,700,{},false);//rotate 180 and face middle goal
-    collect(false);//stop intake
-    chassis->moveToPoint(-3,5,400,{.forwards = false,.maxSpeed = 85},false);//go to middle goal
-    chassis->setPose(-7,7,315);//reset pose
-    middle_score(1000);//score
-
-    ///wing
-    chassis->moveToPoint(-20,20,600,{.maxSpeed = 85},false);//reverse a bit
-    chassis->turnToHeading(330,300,{},false);//turn toward front of long goal
-    chassis->moveToPoint(-40,35-1,600,{.maxSpeed = 85},false);//go to side of goal
-    chassis->turnToHeading(270,500,{},false);//rotate facing alliance side
-    chassis->moveToPoint(-10,35-1,2000,{.forwards = false,.maxSpeed = 60},false);//go backwards with wing
-
-
-
- //get blocks
-    chassis->setPose(-45.25,-7.5+1,90);
-    chassis->turnToHeading(120,800,{},false);//turn toward block
-    chassis->moveToPoint(-22,-22,900,{.maxSpeed = 95},true);//go to blocks
-    pros::delay(500);
-    collect(true);//collect
-    chassis->turnToHeading(210,300,{},false);//turn towards goal
-    collect(false);//stop
-
-    //score
-    chassis->moveToPoint(-37,-47,600,{.maxSpeed = 90},false);//go infornt goal
-    chassis->turnToHeading(270,300,{},false);//turn facing alliance
-    chassis->moveToPoint(-15,-47,700,{.forwards = false,.maxSpeed = 90},false);//go into goal
-    pros::delay(1000);
-    long_score(1000);//score, issue with time
-    chassis->setPose(-20,-47,270);
-
-    //wing
-    chassis->moveToPoint(-47+10,-47-3,600,{.maxSpeed = 90},false);//reverse
-    chassis->turnToHeading(300,600,{},false);//turn toward side
-    chassis->moveToPoint(-25,-56-3,600,{.forwards = false,.maxSpeed = 90},false);//go backwards toward point
-    chassis->turnToHeading(270,600,{},false);
-    chassis->moveToPoint(-5,-56-3,2000,{.forwards = false,.maxSpeed = 90},false);//go backwards while wing down
-
-
 */
+
+

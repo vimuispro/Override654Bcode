@@ -85,6 +85,7 @@ void DriverControl::update() {
     if (controller->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
         clawClosed = false;
         autons.startOpeningClaw(); // Y macro opens the claw
+        chassis->tank(-127,-127, 800); // back up a little
         cascadeMacroRunning = cascadeVal > 0;
     }
 
