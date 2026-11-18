@@ -269,7 +269,41 @@ openClaw();
 
 }
 void Autons::auton1(){
+resetLift();
+closeClaw(); // close claw to hold preload
 
+chassis->setPose(1, -61.7, 0);
+liftTo(1000, 2000, false);
+toggle(2);
+
+chassis->moveToPoint(-9, -49, 1000,{.maxSpeed = 127, .minSpeed = 80, .earlyExitRange = 5},true);
+chassis->moveToPoint(-18.193, -49, 1000,{.minSpeed = 100},false);
+//chassis->moveToPose(-47.071, -18.193, 180, 5000,{.minSpeed = 100},false);
+
+//chassis->tank(10,100,true);
+pros::delay(500);
+chassis->tank(0,0,true);
+
+liftTo(500);
+openClaw();
+chassis->setPose(-18.6, -47, chassis->getPose().theta);
+chassis->moveToPoint(-9, -47, 1000,{.forwards = false},false);
+
+liftTo(0);
+chassis->turnToHeading(-135, 1000);
+chassis->moveToPoint(-20, -61, 1000,{},false);
+chassis->tank(127,127,true);
+
+pros::delay(1000);
+closeClaw();
+liftTo(800);
+pros::delay(500);
+closeClaw();
+liftTo(1800);
+chassis->tank(0,0,true);
+chassis->turnToHeading(-90, 1000);
+chassis->moveToPoint(-10, -61, 1000,{.forwards = false},false);
+chassis->moveToPoint(-23, -47, 1000,{},false);
 }
 void Autons::auton2(){
 
