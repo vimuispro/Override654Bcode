@@ -283,8 +283,9 @@ chassis->moveToPoint(-18.193, -49, 1000,{.minSpeed = 100},false);
 //chassis->moveToPose(-47.071, -18.193, 180, 5000,{.minSpeed = 100},false);
 
 //chassis->tank(10,100,true);
-pros::delay(500);
-chassis->tank(0,0,true);
+
+//pros::delay(500);
+//chassis->tank(0,0,true);
 
 liftTo(500);
 openClaw();
@@ -298,13 +299,14 @@ chassis->tank(127,127,true);
 
 pros::delay(1000);
 closeClaw();
-liftTo(800);
+liftTo(800, 2000);
 pros::delay(500);
 closeClaw();
-liftTo(1800);
+liftTo(1600, 5000);
 chassis->tank(0,0,true);
+
 chassis->turnToHeading(-90, 1000);
-chassis->moveToPoint(-10, -61, 1000,{.forwards = false},false);
+chassis->moveToPoint(0, -61, 1000,{.forwards = false},false);
 chassis->moveToPoint(-23, -47, 1000,{},false);
 }
 //-----------------------------------------------------------A2: Left Side Auton--------------------------------------------
