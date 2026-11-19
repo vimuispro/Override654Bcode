@@ -275,41 +275,51 @@ resetLift();
 closeClaw(); // close claw to hold preload
 
 chassis->setPose(1, -61.7, 0);
-liftTo(1000, 2000, false);
+liftTo(700, 2000, false);
 toggle(2);
 
 chassis->moveToPoint(-9, -49, 1000,{.maxSpeed = 127, .minSpeed = 80, .earlyExitRange = 5},true);
 chassis->moveToPoint(-18.193, -49, 1000,{.minSpeed = 100},false);
-//chassis->moveToPose(-47.071, -18.193, 180, 5000,{.minSpeed = 100},false);
 
-//chassis->tank(10,100,true);
-
-//pros::delay(500);
-//chassis->tank(0,0,true);
-
-liftTo(500);
+liftTo(300);
 openClaw();
 chassis->setPose(-18.6, -47, chassis->getPose().theta);
 chassis->moveToPoint(-9, -47, 1000,{.forwards = false},false);
 
 liftTo(0);
-chassis->turnToHeading(-135, 1000);
-chassis->moveToPoint(-20, -61, 1000,{},false);
-chassis->tank(127,127,true);
+chassis->turnToHeading(-135, 500,{}, true);
+chassis->moveToPoint(-20, -61, 1000,{.earlyExitRange = 5},false);
 
-pros::delay(1000);
+chassis->tank(127,127,true);
+pros::delay(600);
 closeClaw();
-liftTo(800, 2000);
-pros::delay(500);
-closeClaw();
-liftTo(1600, 5000);
+liftTo(800, 900);
 chassis->tank(0,0,true);
 
-chassis->turnToHeading(-90, 1000);
-chassis->moveToPoint(0, -61, 1000,{.forwards = false},false);
+chassis->turnToHeading(-90, 500);
+chassis->moveToPoint(0, -61, 1000,{.forwards = false},true);
 liftTo(1300);
-chassis->moveToPoint(-23, -47, 3000,{.maxSpeed = 80},false);
+chassis->moveToPoint(-23, -47, 800,{.maxSpeed = 60},false);
 
+liftTo(300);
+openClaw();
+
+//second pin
+chassis->moveToPoint(-10, -58, 1000,{.forwards = false},true);
+chassis->moveToPoint(19, -58, 2000,{},false);
+chassis->turnToHeading(140, 500, {}, false);
+
+chassis->tank(127,127,true);
+pros::delay(600);
+closeClaw();
+liftTo(1300, 2000);
+chassis->tank(0,0);
+
+chassis->turnToHeading(90, 500);
+chassis->moveToPoint(0, -61, 1000,{.forwards = false},true);
+
+liftTo(1500);
+chassis->moveToPoint(23, -47, 800,{.maxSpeed = 60},false);
 liftTo(300);
 openClaw();
 }
@@ -326,11 +336,11 @@ liftTo(1000, 2000, false);
 toggle(2);
 
 
-chassis->moveToPoint(-46.2, -8.6, 1000,{.maxSpeed = 127, .minSpeed = 80, .earlyExitRange = 5},true);
-chassis->moveToPoint(-47.071, -18.193, 1000,{.minSpeed = 100},false);
+chassis->moveToPoint(-47, -8.6, 1000,{.maxSpeed = 127, .minSpeed = 80, .earlyExitRange = 5},true);
+chassis->moveToPoint(-47.5, -18.193, 1000,{.minSpeed = 100},false);
 //chassis->moveToPose(-47.071, -18.193, 180, 5000,{.minSpeed = 100},false);
 
-chassis->tank(10,100,true);
+chassis->tank(100,100,true);
 pros::delay(500);
 chassis->tank(0,0,true);
 
@@ -338,14 +348,14 @@ liftTo(400);
 openClaw();
 chassis->setPose(-47, -18.6, chassis->getPose().theta);
 
-chassis->moveToPoint(-47, 0, 2000, {.forwards = false},false);
+chassis->moveToPoint(-47, 0, 900, {.forwards = false},false);
 chassis->moveToPoint(-28.478, -20.31, 500,{.earlyExitRange = 20},true);
-chassis->moveToPoint(-27, -21, 900,{.maxSpeed = 50},false);
+chassis->moveToPoint(-27, -21, 800,{.maxSpeed = 50},false);
 
 closeClaw(); 
 
 
-chassis->moveToPoint(-25, -25, 1000,{.maxSpeed = 127, .minSpeed = 80, .earlyExitRange = 5},true);
+chassis->moveToPoint(-25, -25, 1000,{.maxSpeed = 127, .minSpeed = 80, .earlyExitRange = 1},true);
 liftTo(1500);
 chassis->moveToPoint(-41.2, -23.8, 2000,{.minSpeed = 80},false);
 chassis->tank(10,120,true);
@@ -356,8 +366,8 @@ openClaw();
 chassis->setPose(-41, -23, chassis->getPose().theta-1);
 
 chassis->moveToPoint(-28, -25, 5000,{.forwards = false},false);
-chassis->moveToPoint(-42.555, -41.714, 500,{.earlyExitRange = 20,},true);
-chassis->moveToPoint(-44, -43, 2000,{.maxSpeed = 50},false);
+chassis->moveToPoint(-43, -43, 500,{.earlyExitRange = 20,},true);
+chassis->moveToPoint(-45, -41, 2000,{.maxSpeed = 50},false);
 
 closeClaw(); 
 
@@ -372,8 +382,74 @@ openClaw();
 
 void Autons::auton3(){
   
+resetLift();
+closeClaw(); // close claw to hold preload
+
+chassis->setPose(-61.648, -0.646, 90);
+liftTo(1000, 2000, false);
+toggle(2);
+
+
+chassis->moveToPoint(-47, -8.6, 1000,{.maxSpeed = 127, .minSpeed = 80, .earlyExitRange = 5},true);
+chassis->moveToPoint(-47.5, -18.193, 1000,{.minSpeed = 100},false);
+//chassis->moveToPose(-47.071, -18.193, 180, 5000,{.minSpeed = 100},false);
+
+chassis->tank(100,100,true);
+pros::delay(500);
+chassis->tank(0,0,true);
+
+liftTo(400);
+openClaw();
+chassis->setPose(-47, -18.6, chassis->getPose().theta);
+
+chassis->moveToPoint(-47, 0, 900, {.forwards = false, .earlyExitRange = 5},false);
+chassis->moveToPoint(-28.478, -20.31, 500,{.earlyExitRange = 20},true);
+chassis->moveToPoint(-27, -21, 800,{.maxSpeed = 50},false);
+
+closeClaw(); 
+
+
+chassis->moveToPoint(-25, -25, 1000,{.maxSpeed = 127, .minSpeed = 80, .earlyExitRange = 1},true);
+liftTo(1500);
+chassis->moveToPoint(-41.2, -23.8, 2000,{.minSpeed = 80},false);
+chassis->tank(10,120,true);
+
+liftTo(400);
+openClaw();
+
+chassis->setPose(-41, -23, chassis->getPose().theta-1);
+
+chassis->moveToPoint(-28, -25, 5000,{.forwards = false},false);
+chassis->moveToPoint(-43, -43, 500,{.earlyExitRange = 20,},true);
+chassis->moveToPoint(-45, -41, 2000,{.maxSpeed = 50},false);
+
+closeClaw(); 
+
+liftTo(2000);
+chassis->turnToPoint(-47.183, -23, 1000,{},true);
+chassis->moveToPoint(-47.183, -23, 1000,{.maxSpeed = 60, .minSpeed = 50},false);
+liftTo(1000);
+openClaw();
+
     
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //--------------------
