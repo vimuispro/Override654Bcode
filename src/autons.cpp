@@ -307,7 +307,11 @@ chassis->tank(0,0,true);
 
 chassis->turnToHeading(-90, 1000);
 chassis->moveToPoint(0, -61, 1000,{.forwards = false},false);
-chassis->moveToPoint(-23, -47, 1000,{},false);
+liftTo(1300);
+chassis->moveToPoint(-23, -47, 3000,{.maxSpeed = 80},false);
+
+liftTo(300);
+openClaw();
 }
 //-----------------------------------------------------------A2: Left Side Auton--------------------------------------------
 
