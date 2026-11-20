@@ -36,7 +36,7 @@ liftTo(300);
 openClaw();
 
 //second pin
-chassis->moveToPoint(-10, -58, 1000,{.forwards = false},true);
+chassis->moveToPoint(0, -58, 1000,{.forwards = false},true);
 chassis->moveToPoint(19, -58, 2000,{},false);
 chassis->turnToHeading(135, 500, {}, false);
 
