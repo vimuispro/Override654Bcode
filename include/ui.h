@@ -6,7 +6,8 @@ enum AutonMode {
     AUTON_test,
     AUTON_auton1,
     AUTON_auton2,
-    AUTON_auton3
+    AUTON_auton3,
+    AUTON_auton4
 };
 
 extern AutonMode selectedAuton;

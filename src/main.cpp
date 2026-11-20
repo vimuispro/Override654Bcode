@@ -73,8 +73,12 @@ void  autonomous() {
             autons.auton3();
             break;
 
+        case AUTON_auton4:
+            autons.auton4();
+            break;
+
         default:
-            autons.auton3(); // fallback
+            autons.skillsAuton(); // fallback
             break;
     }
 }

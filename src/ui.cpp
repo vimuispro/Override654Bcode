@@ -17,6 +17,7 @@ static lv_obj_t* skillsBtn;
 static lv_obj_t* auton1Btn;
 static lv_obj_t* auton2Btn;
 static lv_obj_t* auton3Btn;
+static lv_obj_t* auton4Btn;
 static lv_obj_t* testBtn;
 static lv_obj_t* coordLabel;
 static lv_obj_t* cascadeLabel;
@@ -118,6 +119,18 @@ void buildFieldScreen() {
         selectedAuton = AUTON_auton3;
     }, LV_EVENT_CLICKED, NULL);
 
+    // Auton 4
+    auton4Btn = lv_button_create(fieldScreen);
+    lv_obj_set_size(auton4Btn, btnW, btnH);
+    lv_obj_set_pos(auton4Btn, 20, 140);
+    lv_obj_add_style(auton4Btn, &normalStyle, LV_PART_MAIN);
+    lv_obj_t* a4Label = lv_label_create(auton4Btn);
+    lv_label_set_text(a4Label, "a4");
+    lv_obj_center(a4Label);
+    lv_obj_add_event_cb(auton4Btn, [](lv_event_t* e){
+        selectedAuton = AUTON_auton4;
+    }, LV_EVENT_CLICKED, NULL);
+
     // Test auton
     testBtn = lv_button_create(fieldScreen);
     lv_obj_set_size(testBtn, btnW, btnH);
@@ -152,6 +165,7 @@ void updateAutonHighlight() {
     lv_obj_add_style(auton1Btn, &normalStyle, LV_PART_MAIN);
     lv_obj_add_style(auton2Btn, &normalStyle, LV_PART_MAIN);
     lv_obj_add_style(auton3Btn, &normalStyle, LV_PART_MAIN);
+    lv_obj_add_style(auton4Btn, &normalStyle, LV_PART_MAIN);
     lv_obj_add_style(testBtn, &normalStyle, LV_PART_MAIN);
 
     if (selectedAuton == AUTON_SKILLS)
@@ -165,6 +179,9 @@ void updateAutonHighlight() {
 
     if (selectedAuton == AUTON_auton3)
         lv_obj_add_style(auton3Btn, &selectedStyle, LV_PART_MAIN);
+
+    if (selectedAuton == AUTON_auton4)
+        lv_obj_add_style(auton4Btn, &selectedStyle, LV_PART_MAIN);
 
     if (selectedAuton == AUTON_test)
         lv_obj_add_style(testBtn, &selectedStyle, LV_PART_MAIN);
@@ -234,7 +251,7 @@ void uiUpdate() {
 
 // Order the LEFT / RIGHT arrows step through
 static const AutonMode autonOrder[] = {
-    AUTON_NONE, AUTON_SKILLS, AUTON_test, AUTON_auton1, AUTON_auton2, AUTON_auton3
+    AUTON_NONE, AUTON_SKILLS, AUTON_test, AUTON_auton1, AUTON_auton2, AUTON_auton3, AUTON_auton4
 };
 static const int autonCount = sizeof(autonOrder) / sizeof(autonOrder[0]);
 
@@ -245,6 +262,7 @@ const char* autonName(AutonMode mode) {
         case AUTON_auton1: return "a1";
         case AUTON_auton2: return "a2";
         case AUTON_auton3: return "a3";
+        case AUTON_auton4: return "a4";
         default:           return "None";
     }
 }
