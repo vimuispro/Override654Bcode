@@ -20,7 +20,11 @@ Autons::Autons(lemlib::Chassis* chassis)
 
 static const double LIFT_MAX       = CASCADE_MAX_HEIGHT_INCHES;
 static const double LIFT_KP        = 6.0;  // speed per inch of distance left (was 4: crept slowly at the end)
-static const double LIFT_MIN_SPEED = 35;   // keeps it moving when it's almost there (was 25)
+// Minimum power so it keeps moving when it's almost there. Going UP needs much more because
+// it's fighting gravity: with 35 it ran out of power around 33" and stopped short of the top.
+// TUNE: if it stops short going up, raise LIFT_MIN_SPEED_UP; if it overshoots going up, lower it.
+static const double LIFT_MIN_SPEED_UP   = 60;
+static const double LIFT_MIN_SPEED_DOWN = 35;
 static const double LIFT_TOLERANCE = 0.5;  // "close enough" to the target
 // Stall check: if the lift moves less than LIFT_STALL_DIST inches in LIFT_STALL_MS, it's treated
 // as stuck and the move ends. Was 150ms, which ended slow moves early at the wrong height.
@@ -77,9 +81,9 @@ void Autons::liftTo(double height, int timeout, bool wait, int maxSpeed) {
                     } else {
                         double speed = LIFT_KP * std::fabs(error);
                         if (speed > liftMaxSpeed) speed = liftMaxSpeed;
-                        const double minSpeed = liftMaxSpeed < LIFT_MIN_SPEED
-                            ? liftMaxSpeed
-                            : LIFT_MIN_SPEED;
+                        const bool goingUp = !bottomTarget && error > 0;
+                        const double wantedMin = goingUp ? LIFT_MIN_SPEED_UP : LIFT_MIN_SPEED_DOWN;
+                        const double minSpeed = liftMaxSpeed < wantedMin ? liftMaxSpeed : wantedMin;
                         if (speed < minSpeed) speed = minSpeed;
                         // negative motor power raises the lift (same as R1 in driver control)
                         cascadeMotors.move(bottomTarget ? speed : (error > 0 ? -speed : speed));

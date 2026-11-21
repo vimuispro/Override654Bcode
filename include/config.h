@@ -32,7 +32,7 @@ extern pros::MotorGroup cascadeMotors;
 // pistons
 extern pros::adi::DigitalOut clawLift; // piston that moves the claw up/down
 
-constexpr double CASCADE_MAX_HEIGHT_INCHES = 40.0;
+constexpr double CASCADE_MAX_HEIGHT_INCHES = 36.0; // measured top of the lift
 double getCascadeHeight();
 void calibrateCascadeHeight();
 
