@@ -41,13 +41,25 @@ static std::uint32_t liftEndTime = 0;
 static bool liftTaskStarted = false;
 static double liftLastHeight = 0;
 static std::uint32_t liftLastMoveTime = 0;
+static bool liftGoingUp = false;   // direction is picked once when liftTo() starts
 
 double Autons::liftHeight() {
     return getCascadeHeight();
 }
 
+// Sets the current lift position as height 0. Only does it if the lift looks like it's at
+// (or below) the bottom: if an earlier run left the lift UP, re-zeroing there would make
+// the code think the top is 0, and then it only ever tries to go up.
 void Autons::resetLift() {
-    calibrateCascadeHeight(); // the lift must be all the way DOWN when this runs
+    const std::int32_t readingMm = cascadeDistance.get();
+    const bool goodReading = readingMm != PROS_ERR && readingMm > 0 && readingMm < 9999;
+    const bool calibratedBefore = cascadeOffsetInches > 0;
+    if (goodReading && calibratedBefore &&
+        static_cast<double>(readingMm) / 25.4 > cascadeOffsetInches + 2.0) {
+        liftStopReason = "not reset: lift was up";  // keep the old zero
+        return;
+    }
+    calibrateCascadeHeight();
 }
 
 void Autons::liftTo(double height, int timeout, bool wait, int maxSpeed) {
@@ -65,7 +77,6 @@ void Autons::liftTo(double height, int timeout, bool wait, int maxSpeed) {
                 if (liftActive) {
                     const double height = getCascadeHeight();
                     const double error = liftTarget - height;
-                    const bool bottomTarget = liftTarget <= 0;
 
                     // remember the last time the lift actually moved
                     if (std::fabs(height - liftLastHeight) > LIFT_STALL_DIST) {
@@ -75,11 +86,12 @@ void Autons::liftTo(double height, int timeout, bool wait, int maxSpeed) {
                     const bool stalled = pros::millis() - liftLastMoveTime > LIFT_STALL_MS;
 
                     // done when: close enough, stuck (hard stop / too heavy), or out of time
-                    const bool goingUp = !bottomTarget && error > 0;
-                    const bool targetReached = bottomTarget
-                        ? height <= LIFT_TOLERANCE
-                        : (goingUp ? error <= LIFT_TOLERANCE + LIFT_UP_EARLY_STOP
-                                   : std::fabs(error) <= LIFT_TOLERANCE);
+                    // The move only ever goes ONE way. Once the lift reaches or passes the target
+                    // it stops and holds; it never turns around (that caused bouncing).
+                    const bool goingUp = liftGoingUp;
+                    const bool targetReached = goingUp
+                        ? height >= liftTarget - LIFT_TOLERANCE - LIFT_UP_EARLY_STOP
+                        : height <= liftTarget + LIFT_TOLERANCE;
                     if (targetReached || stalled || pros::millis() > liftEndTime) {
                         liftStopReason = targetReached ? "reached" : (stalled ? "stalled" : "timeout");
                         cascadeMotors.brake();   // hold mode keeps it at this height
@@ -95,7 +107,7 @@ void Autons::liftTo(double height, int timeout, bool wait, int maxSpeed) {
                             if (speed < minSpeed) speed = minSpeed;
                         }
                         // negative motor power raises the lift (same as R1 in driver control)
-                        cascadeMotors.move(bottomTarget ? speed : (error > 0 ? -speed : speed));
+                        cascadeMotors.move(goingUp ? -speed : speed);
                     }
                 }
                 pros::delay(10);
@@ -107,6 +119,7 @@ void Autons::liftTo(double height, int timeout, bool wait, int maxSpeed) {
     liftMaxSpeed = maxSpeed;
     cascadeBadReads = 0;
     liftStopReason = "moving";
+    liftGoingUp = height > getCascadeHeight();
     liftEndTime = pros::millis() + timeout;
     liftLastHeight = getCascadeHeight();
     liftLastMoveTime = pros::millis();   // give it LIFT_STALL_MS to start moving
