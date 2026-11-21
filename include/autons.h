@@ -32,6 +32,12 @@ public:
     // Use this instead of chassis->tank() so the robot never keeps driving by accident.
     void pushFor(int leftPower, int rightPower, int ms);
 
+    // ---- Position reset from the distance sensors ----
+    // Call when the robot is STOPPED and a sensor faces a field wall. Each sensor that
+    // can see a wall straight on fixes X or Y (whichever that wall gives). Heading is not changed.
+    // Returns how many sensors were used (0, 1 or 2).
+    int distanceReset();
+
     // ---- Routines ----
     void testAuton();
     void skillsAuton();

@@ -269,3 +269,86 @@ void Autons::rightSideOpening() {
     openClaw();
     
 }
+
+// ========================================================================
+// Position reset from the distance sensors
+// ------------------------------------------------------------------------
+// The sensor measures how far it is from a wall. We know where the walls are
+// (FIELD_WALL), where the sensor is on the robot (the *_MOUNT values in config.h)
+// and which way the robot faces (IMU), so we can work out the robot's X or Y.
+//
+//   chassis->moveToPoint(...);   // stop somewhere a sensor faces a wall
+//   distanceReset();             // fixes X and/or Y
+// ========================================================================
+
+static const double DR_MAX_ANGLE_OFF   = 20.0;  // skip if the sensor isn't within 20 deg of facing a wall
+static const double DR_MAX_RANGE       = 80.0;  // inches; past this the reading is too noisy
+static const double DR_MAX_CORRECTION  = 8.0;   // skip if it would move the pose more than this (seeing a robot/goal, not the wall)
+static const int    DR_MIN_CONFIDENCE  = 30;    // 0-63; only meaningful past ~8"
+
+static double degToRad(double d) { return d * M_PI / 180.0; }
+
+// Works out the new X or Y from one sensor. Returns false if it can't be trusted.
+static bool distanceFix(pros::Distance& sensor, const DistanceSensorMount& mount,
+                        const lemlib::Pose& pose, bool& fixesX, double& value) {
+    // average a few readings
+    double sum = 0;
+    int count = 0;
+    for (int i = 0; i < 3; ++i) {
+        const std::int32_t mm = sensor.get();
+        const std::int32_t conf = sensor.get_confidence();
+        const bool valid = mm != PROS_ERR && mm > 0 && mm < 9999 &&
+                           (mm < 200 || conf == PROS_ERR || conf >= DR_MIN_CONFIDENCE);
+        if (valid) { sum += mm / 25.4; ++count; }
+        pros::delay(15);
+    }
+    if (count == 0) return false;
+    const double reading = sum / count;
+    if (reading > DR_MAX_RANGE) return false;
+
+    // LemLib heading: 0 = +Y, 90 = +X (clockwise)
+    const double h = degToRad(pose.theta);
+    // sensor position relative to the tracking center, in field directions
+    const double offX = mount.right * std::cos(h) + mount.forward * std::sin(h);
+    const double offY = -mount.right * std::sin(h) + mount.forward * std::cos(h);
+    // direction the beam points on the field
+    const double a = degToRad(pose.theta + mount.angle);
+    const double dirX = std::sin(a);
+    const double dirY = std::cos(a);
+
+    const double minCos = std::cos(degToRad(DR_MAX_ANGLE_OFF));
+    if (std::fabs(dirX) >= minCos) {
+        // facing the +X or -X wall
+        const double wall = dirX > 0 ? FIELD_WALL : -FIELD_WALL;
+        value = wall - reading * dirX - offX;
+        fixesX = true;
+        return std::fabs(value - pose.x) <= DR_MAX_CORRECTION;
+    }
+    if (std::fabs(dirY) >= minCos) {
+        // facing the +Y or -Y wall
+        const double wall = dirY > 0 ? FIELD_WALL : -FIELD_WALL;
+        value = wall - reading * dirY - offY;
+        fixesX = false;
+        return std::fabs(value - pose.y) <= DR_MAX_CORRECTION;
+    }
+    return false;  // pointing at a corner / at an angle
+}
+
+int Autons::distanceReset() {
+    lemlib::Pose pose = chassis->getPose();
+    int used = 0;
+
+    bool fixesX = false;
+    double value = 0;
+    if (distanceFix(left_distance, LEFT_DISTANCE_MOUNT, pose, fixesX, value)) {
+        (fixesX ? pose.x : pose.y) = value;
+        ++used;
+    }
+    if (distanceFix(back_distance, BACK_DISTANCE_MOUNT, pose, fixesX, value)) {
+        (fixesX ? pose.x : pose.y) = value;
+        ++used;
+    }
+
+    if (used > 0) chassis->setPose(pose.x, pose.y, pose.theta);
+    return used;
+}
