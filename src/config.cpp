@@ -90,7 +90,8 @@ lemlib::ControllerSettings linearController(
     1,   // Small-error range, in inches
     100, // Time to remain within the small-error range before settling, in milliseconds
     3,   // Large-error range, in inches
-    500, // Time to remain within the large-error range before settling, in milliseconds
+    250, // Time to remain within the large-error range before settling, in milliseconds
+         // (was 500: any move that stopped 1-3" short sat still for half a second)
     20   // Maximum acceleration (slew)
 );
 lemlib::ControllerSettings angularController(
@@ -101,7 +102,8 @@ lemlib::ControllerSettings angularController(
     1.5,  // Small-error range, in degrees
     100,  // Time to remain within the small-error range before settling, in milliseconds
     3,    // Large-error range, in degrees
-    500,  // Time to remain within the large-error range before settling, in milliseconds
+    250,  // Time to remain within the large-error range before settling, in milliseconds
+          // (was 500: any turn that stopped 1.5-3 deg short sat still for half a second)
     0     // Maximum acceleration (slew); 0 disables slew limiting
 );
 
