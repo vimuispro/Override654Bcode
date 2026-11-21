@@ -76,6 +76,7 @@ void Autons::liftTo(double height, int timeout, bool wait, int maxSpeed) {
                         ? height <= LIFT_TOLERANCE
                         : std::fabs(error) <= LIFT_TOLERANCE;
                     if (targetReached || stalled || pros::millis() > liftEndTime) {
+                        liftStopReason = targetReached ? "reached" : (stalled ? "stalled" : "timeout");
                         cascadeMotors.brake();   // hold mode keeps it at this height
                         liftActive = false;
                     } else {
@@ -96,6 +97,8 @@ void Autons::liftTo(double height, int timeout, bool wait, int maxSpeed) {
 
     liftTarget = height;
     liftMaxSpeed = maxSpeed;
+    cascadeBadReads = 0;
+    liftStopReason = "moving";
     liftEndTime = pros::millis() + timeout;
     liftLastHeight = getCascadeHeight();
     liftLastMoveTime = pros::millis();   // give it LIFT_STALL_MS to start moving
