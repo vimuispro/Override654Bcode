@@ -19,10 +19,13 @@ Autons::Autons(lemlib::Chassis* chassis)
 // ========================================================================
 
 static const double LIFT_MAX       = CASCADE_MAX_HEIGHT_INCHES;
-static const double LIFT_KP        = 4.0;  // speed per inch of distance left
-static const double LIFT_MIN_SPEED = 25;   // keeps it moving when it's almost there
-static const double LIFT_TOLERANCE = 0.5; // "close enough" to the target
-static const int    LIFT_STALL_MS  = 150;  // stop waiting if the lift hasn't moved for this long
+static const double LIFT_KP        = 6.0;  // speed per inch of distance left (was 4: crept slowly at the end)
+static const double LIFT_MIN_SPEED = 35;   // keeps it moving when it's almost there (was 25)
+static const double LIFT_TOLERANCE = 0.5;  // "close enough" to the target
+// Stall check: if the lift moves less than LIFT_STALL_DIST inches in LIFT_STALL_MS, it's treated
+// as stuck and the move ends. Was 150ms, which ended slow moves early at the wrong height.
+static const double LIFT_STALL_DIST = 0.25;
+static const int    LIFT_STALL_MS   = 300;
 
 static double liftTarget = 0;
 static int liftMaxSpeed = 127;
@@ -32,27 +35,6 @@ static bool liftTaskStarted = false;
 static double liftLastHeight = 0;
 static std::uint32_t liftLastMoveTime = 0;
 
-static const int left_sensor_offset = 0; // offset in inches for the left tracking wheel
-static const int right_sensor_offset = 0; // offset in inches for the right tracking wheel
-/*
-void distanceReset(std::string axis, const double field_length){
-  double x,y;
-  if(axis == "x"){
-    double left = left_distance.get()/25.4 + left_sensor_offset;
-    double right = right_distance.get()/25.4 + right_sensor_offset;
-    x = (left);
-    chassis.odom_xyt_set(x, chassis.odom_y_get(), chassis.odom_theta_get());
-    master.print(6, 0, "x reset -> %.2f\n", chassis.odom_x_get());
-  }
-  else if(axis == "y"){
-    double left = left_distance.get()/25.4 + left_sensor_offset;
-    double right = right_distance.get()/25.4 + right_sensor_offset;
-    y = (left);
-    chassis.odom_xyt_set(chassis.odom_x_get(), y, chassis.odom_theta_get());
-
-  }
-}
-  */
 double Autons::liftHeight() {
     return getCascadeHeight();
 }
@@ -79,7 +61,7 @@ void Autons::liftTo(double height, int timeout, bool wait, int maxSpeed) {
                     const bool bottomTarget = liftTarget <= 0;
 
                     // remember the last time the lift actually moved
-                    if (std::fabs(height - liftLastHeight) > 0.25) {
+                    if (std::fabs(height - liftLastHeight) > LIFT_STALL_DIST) {
                         liftLastHeight = height;
                         liftLastMoveTime = pros::millis();
                     }
@@ -135,12 +117,20 @@ void Autons::toggle(int rotations) {
     toggle_motor.move(0);
 }
 
-void Autons::openClaw() {
+void Autons::openClaw(int waitMs) {
     startOpeningClaw();
+    if (waitMs > 0) pros::delay(waitMs);  // let it actually release before driving away
 }
 
-void Autons::closeClaw() {
+void Autons::closeClaw(int waitMs) {
     startClosingClaw();
+    if (waitMs > 0) pros::delay(waitMs);  // let it actually grip before lifting / driving
+}
+
+void Autons::pushFor(int leftPower, int rightPower, int ms) {
+    chassis->tank(leftPower, rightPower, true);
+    pros::delay(ms);
+    chassis->tank(0, 0, true);
 }
 
 void Autons::startClawMove(int power) {
@@ -183,68 +173,61 @@ void Autons::updateClaw() {
     clawMutex.give();
 }
 
-//--------------------
-//Old Stuff---------
-//--------------------
-/*
-resetLift();
-closeClaw(); // close claw to hold preload
-chassis->setPose(-68.039, -0.62, 90);// start facing center
+// ========================================================================
+// Shared right-side opening
+// ------------------------------------------------------------------------
+// auton2 and skillsAuton both start with exactly this. Fix/tune it HERE and
+// both routines get the change.
+// ========================================================================
+void Autons::rightSideOpening() {
+    resetLift();
+    closeClaw(); // close claw to hold preload
 
-//rotate toggle
-toggle_motor.move(127);
-pros::delay(400);
-toggle_motor.move(0);
+    chassis->setPose(-61.648, -0.646, 90);
+    liftTo(13.33, 2000, false);
+    toggle(2);
 
+    chassis->moveToPoint(-47, -8.6, 1000, {.maxSpeed = 127, .minSpeed = 80, .earlyExitRange = 5}, true);
+    chassis->moveToPoint(-47.5, -18.193, 1000, {.minSpeed = 100}, false);
 
-chassis->moveToPoint(-53.929, -19, 600, {.maxSpeed = 90}, true); 
-// move to goal and wait
+    pushFor(100, 100, 500);  // square up on the goal
 
-liftTo(20.0); // lift cascade over goal
-pros::delay(300);
-liftTo(0);
-pros::delay(50);
-openClaw(); // open claw to score
-// //score preload
-pros::delay(100);
-//reverse from the goal
-chassis->moveToPoint(-58.929, 0, 600, {.forwards = false}, false);
+    liftTo(5.33);
+    openClaw();
+    chassis->setPose(-47, -18.6, chassis->getPose().theta);
 
-chassis->turnToPoint(-32.5,-22.9,1000,{},false);// turn toward cup
-chassis->moveToPoint(-37+1,-18.7-1,800,{},false);//go to cup
-chassis->moveToPoint(-37,-18.7,800,{.maxSpeed = 30},true);//go to cup slowly
+    chassis->moveToPoint(-47, 0, 900, {.forwards = false}, false);
+    // fast approach, then exit 20" out and finish slowly
+    // (earlyExitRange does nothing without minSpeed, so before this the move just ran out its 500ms timeout)
+    chassis->moveToPoint(-28.478, -20.31, 1000, {.minSpeed = 50, .earlyExitRange = 20}, true);
+    chassis->moveToPoint(-27, -21, 800, {.maxSpeed = 50}, false);
 
-pros::delay(100);
-closeClaw();//close the claw
-pros::delay(100);
+    closeClaw();
 
-liftTo(26.67);//lift cascade
-//turn to goal
-chassis->turnToPoint(-44.3,-24.1,500,{},false);
-chassis->moveToPoint(-44.3-5,-24.1,1000,{.maxSpeed = 90},false);
-//lower cascade
-liftTo(9.33);
-openClaw();
-liftTo(0);
-//reveres from the goal
-chassis->moveToPoint(-25.6, -16.7, 400, {.forwards = false}, false);
+    chassis->moveToPoint(-25, -25, 1000, {.maxSpeed = 127, .minSpeed = 80, .earlyExitRange = 1}, true);
+    liftTo(20.0);
+    chassis->moveToPoint(-41.2, -23.8, 2000, {.minSpeed = 80}, false);
 
-chassis->turnToPoint(-51, -42.8, 400, {},false);//turn to cup
+    // swing into the goal while the lift comes down. Before, the swing ran for however long
+    // the lift took and was never stopped. TUNE the 300ms on the robot.
+    liftTo(5.33, 2000, false);
+    pushFor(10, 120, 300);
+    waitUntilLiftDone();
+    openClaw();
 
-chassis->moveToPoint(-51, -42.8, 500, {},false);//go to cup
-chassis->moveToPoint(-51, -42.8, 1000, {.maxSpeed = 50},true);//go to cup slowly
+    chassis->setPose(-41, -23, chassis->getPose().theta - 1);
 
-pros::delay(600);
-closeClaw();
-pros::delay(100);
+    chassis->moveToPoint(-28, -25, 1500, {.forwards = false}, false);  // timeout was 5000
+    chassis->moveToPoint(-43, -43, 1000, {.minSpeed = 50, .earlyExitRange = 20}, true);
+    chassis->moveToPoint(-45, -41, 2000, {.maxSpeed = 50}, false);
 
-liftTo(37.33);//lift cascade
+    closeClaw();
 
-chassis->turnToPoint(-50.3, -30.8, 600, {},false);
-chassis->moveToPoint(-50.3, -30.8, 1000, {},false);
-liftTo(9.33);
-openClaw();
-liftTo(0);
-*/
-
-
+    // lift while turning instead of standing still, but make sure it's up before driving in
+    liftTo(26.67, 2000, false);
+    chassis->turnToPoint(-47.183, -23, 1000, {}, false);
+    waitUntilLiftDone();
+    chassis->moveToPoint(-47.183, -23, 1000, {.maxSpeed = 60, .minSpeed = 50}, false);
+    liftTo(13.33);
+    openClaw();
+}
