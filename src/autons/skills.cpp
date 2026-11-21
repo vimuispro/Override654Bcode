@@ -55,37 +55,34 @@ openClaw();
 
 chassis->setPose(-47, -28, chassis->getPose().theta-1); //set new pose
 
-//pin 1
-chassis->moveToPoint(-47, -59, 1000,{.forwards = false},false); //move backwards off goal
-liftTo(0, 2000, false); //lift down
-chassis->turnToHeading(270, 1000,{},false); //turn to matchloader
-chassis->moveToPoint(-63.5, -60, 1000,{},false); //grab la matchload
-closeClaw();  //claw
-pros::delay(100);
-chassis->moveToPoint(-47, -59, 1000,{.forwards = false},true); //move back off matchloader
-liftTo(33.33, 2000, false);//left to height
-chassis->turnToHeading(0, 1000,{},false); //turn to goal
-chassis->moveToPoint(-47, -26, 2000,{.maxSpeed = 60},false); //go to goal
-chassis->setPose(-47, -28, chassis->getPose().theta); //set new pose
-liftTo(24.0, 2000, true, 100);
-openClaw();
-
-
-//pin 2
-chassis->moveToPoint(-47, -59, 1000,{.forwards = false},false);
-liftTo(0, 2000, false);
-chassis->turnToHeading(270, 1000,{},false);
-chassis->moveToPoint(-63.5, -60, 1000,{},false);
-closeClaw(); 
-pros::delay(100);
-chassis->moveToPoint(-47, -59, 1000,{.forwards = false},true);
-liftTo(40.0, 5000, false);
-chassis->turnToHeading(0, 1000,{},false);
-chassis->moveToPoint(-47, -26, 2000,{.maxSpeed = 60},false);
-liftTo(40.0, 5000, false);
-chassis->setPose(-47, -28, chassis->getPose().theta);
-liftTo(30.67,  2000, true, 100);
-openClaw();
+struct PinCycle {
+    double liftHeight;
+    int liftTimeout;
+    bool raiseAboveGoal;
+    double scoreHeight;
+};
+const PinCycle pinCycles[] = {
+    {33.33, 2000, false, 24.0},
+    {40.0, 5000, true, 30.67},
+};
+for (const PinCycle& pin : pinCycles) {
+    chassis->moveToPoint(-47, -59, 1000,{.forwards = false},false);
+    liftTo(0, 2000, false);
+    chassis->turnToHeading(270, 1000,{},false);
+    chassis->moveToPoint(-63.5, -60, 1000,{},false);
+    closeClaw();
+    pros::delay(100);
+    chassis->moveToPoint(-47, -59, 1000,{.forwards = false},true);
+    liftTo(pin.liftHeight, pin.liftTimeout, false);
+    chassis->turnToHeading(0, 1000,{},false);
+    chassis->moveToPoint(-47, -26, 2000,{.maxSpeed = 60},false);
+    if (pin.raiseAboveGoal) {
+        liftTo(40.0, 5000, false);
+    }
+    chassis->setPose(-47, -28, chassis->getPose().theta);
+    liftTo(pin.scoreHeight, 2000, true, 100);
+    openClaw();
+}
 
 //pin only
 chassis->moveToPoint(-47, -59, 1000,{.forwards = false},false);
@@ -106,35 +103,32 @@ liftTo(0);
 openClaw();
 
 
-//cup 1
-chassis->moveToPoint(-34, -46, 1000,{},false);
-chassis->moveToPoint(-65, -50, 2000,{},false);
-closeClaw();
-pros::delay(100);
-liftTo(16.0, 5000, false);
-chassis->moveToPoint(-34, -47, 1000,{.forwards = false},false);
-chassis->turnToHeading(90, 1000,{},true);
-chassis->moveToPoint(-26, -47, 1000,{},false);
-chassis->tank(127,127,true);
-pros::delay(500);
-chassis->tank(0,0,true);
-liftTo(0);
-openClaw();
-chassis->setPose(-47, -29, chassis->getPose().theta);
-
-//cup 2
-chassis->moveToPoint(-34, -46, 1000,{},false);
-chassis->moveToPoint(-65, -60, 2000,{},false);
-closeClaw();
-pros::delay(100);
-liftTo(26.67, 5000, false);
-chassis->moveToPoint(-34, -47, 1000,{.forwards = false},false);
-chassis->turnToHeading(90, 1000,{},true);
-chassis->moveToPoint(-26, -47, 1000,{},false);
-chassis->tank(127,127,true);
-pros::delay(500);
-chassis->tank(0,0,true);
-liftTo(0);
-openClaw();
+struct CupCycle {
+    double pickupY;
+    double liftHeight;
+    bool resetPoseAfter;
+};
+const CupCycle cupCycles[] = {
+    {-50, 16.0, true},
+    {-60, 26.67, false},
+};
+for (const CupCycle& cup : cupCycles) {
+    chassis->moveToPoint(-34, -46, 1000,{},false);
+    chassis->moveToPoint(-65, cup.pickupY, 2000,{},false);
+    closeClaw();
+    pros::delay(100);
+    liftTo(cup.liftHeight, 5000, false);
+    chassis->moveToPoint(-34, -47, 1000,{.forwards = false},false);
+    chassis->turnToHeading(90, 1000,{},true);
+    chassis->moveToPoint(-26, -47, 1000,{},false);
+    chassis->tank(127,127,true);
+    pros::delay(500);
+    chassis->tank(0,0,true);
+    liftTo(0);
+    openClaw();
+    if (cup.resetPoseAfter) {
+        chassis->setPose(-47, -29, chassis->getPose().theta);
+    }
+}
 }
 //-----------------------------------------------------------SKILLS AUTON--------------------------------------------
