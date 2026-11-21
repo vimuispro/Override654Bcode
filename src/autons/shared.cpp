@@ -20,10 +20,11 @@ Autons::Autons(lemlib::Chassis* chassis)
 
 static const double LIFT_MAX       = CASCADE_MAX_HEIGHT_INCHES;
 static const double LIFT_KP        = 6.0;  // speed per inch of distance left (was 4: crept slowly at the end)
-// Minimum power so it keeps moving when it's almost there. Going UP needs much more because
-// it's fighting gravity: with 35 it ran out of power around 33" and stopped short of the top.
-// TUNE: if it stops short going up, raise LIFT_MIN_SPEED_UP; if it overshoots going up, lower it.
-static const double LIFT_MIN_SPEED_UP   = 60;
+// Going UP the lift always uses full power (liftMaxSpeed): any less and it can't lift itself near
+// the top (it stalled at 33" even with 60). Gravity stops it fast when the power cuts, so it
+// doesn't overshoot much. If it DOES go past the target going up, raise LIFT_UP_EARLY_STOP.
+static const double LIFT_UP_EARLY_STOP = 0.0;  // inches before the target to cut power going up
+// Going DOWN gravity helps, so it slows near the target and keeps at least this much power:
 static const double LIFT_MIN_SPEED_DOWN = 35;
 static const double LIFT_TOLERANCE = 0.5;  // "close enough" to the target
 // Stall check: if the lift moves less than LIFT_STALL_DIST inches in LIFT_STALL_MS, it's treated
@@ -72,20 +73,25 @@ void Autons::liftTo(double height, int timeout, bool wait, int maxSpeed) {
                     const bool stalled = pros::millis() - liftLastMoveTime > LIFT_STALL_MS;
 
                     // done when: close enough, stuck (hard stop / too heavy), or out of time
+                    const bool goingUp = !bottomTarget && error > 0;
                     const bool targetReached = bottomTarget
                         ? height <= LIFT_TOLERANCE
-                        : std::fabs(error) <= LIFT_TOLERANCE;
+                        : (goingUp ? error <= LIFT_TOLERANCE + LIFT_UP_EARLY_STOP
+                                   : std::fabs(error) <= LIFT_TOLERANCE);
                     if (targetReached || stalled || pros::millis() > liftEndTime) {
                         liftStopReason = targetReached ? "reached" : (stalled ? "stalled" : "timeout");
                         cascadeMotors.brake();   // hold mode keeps it at this height
                         liftActive = false;
                     } else {
-                        double speed = LIFT_KP * std::fabs(error);
-                        if (speed > liftMaxSpeed) speed = liftMaxSpeed;
-                        const bool goingUp = !bottomTarget && error > 0;
-                        const double wantedMin = goingUp ? LIFT_MIN_SPEED_UP : LIFT_MIN_SPEED_DOWN;
-                        const double minSpeed = liftMaxSpeed < wantedMin ? liftMaxSpeed : wantedMin;
-                        if (speed < minSpeed) speed = minSpeed;
+                        double speed = liftMaxSpeed;   // going up: full power the whole way
+                        if (!goingUp) {
+                            // going down: slow down near the target
+                            speed = LIFT_KP * std::fabs(error);
+                            if (speed > liftMaxSpeed) speed = liftMaxSpeed;
+                            const double minSpeed = liftMaxSpeed < LIFT_MIN_SPEED_DOWN
+                                ? liftMaxSpeed : LIFT_MIN_SPEED_DOWN;
+                            if (speed < minSpeed) speed = minSpeed;
+                        }
                         // negative motor power raises the lift (same as R1 in driver control)
                         cascadeMotors.move(bottomTarget ? speed : (error > 0 ? -speed : speed));
                     }
