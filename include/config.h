@@ -38,6 +38,7 @@ double getCascadeHeight();
 extern std::int32_t cascadeRawMm;   // last raw distance sensor reading, in mm
 extern int cascadeBadReads;         // bad sensor readings since the last liftTo()
 extern const char* liftStopReason;  // why the last liftTo() ended
+extern bool cascadeSensorBlocked;   // true while the sensor is ignored because it jumped (sees the goal)
 void calibrateCascadeHeight();
 
 
