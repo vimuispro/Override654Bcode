@@ -1,4 +1,5 @@
 #include "config.h"
+#include <cmath>
 
 // controller
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
@@ -11,13 +12,46 @@ pros::MotorGroup leftMotors({-10, 6}, pros::MotorGearset::blue);
 pros::MotorGroup rightMotors({-5, 1}, pros::MotorGearset::blue);
 pros::Distance left_distance(0);
 pros::Distance right_distance(0);
+pros::Distance cascadeDistance(18);
 // sensors
 pros::Imu imu(7);
 pros::Rotation verticalEnc(2); // keep POSITIVE
-pros::Rotation cascadeEnc(-12);
 pros::Optical colorSensor(20);
 double cascadeVal = 0.0;
+double cascadeOffsetInches = 0.0;
 bool isBlueTeam = true;
+
+double getCascadeHeight() {
+    const std::int32_t readingMm = cascadeDistance.get();
+    if (readingMm == PROS_ERR || readingMm <= 0 || readingMm >= 9999) {
+        return cascadeVal;
+    }
+
+    const double readingInches = static_cast<double>(readingMm) / 25.4;
+    double height = std::fabs(readingInches - cascadeOffsetInches);
+    if (height < 0.0) height = 0.0;
+    if (height > CASCADE_MAX_HEIGHT_INCHES) height = CASCADE_MAX_HEIGHT_INCHES;
+    return height;
+}
+
+void calibrateCascadeHeight() {
+    double sum = 0.0;
+    int samples = 0;
+
+    for (int i = 0; i < 10; ++i) {
+        const std::int32_t readingMm = cascadeDistance.get();
+        if (readingMm != PROS_ERR && readingMm > 0 && readingMm < 9999) {
+            sum += static_cast<double>(readingMm) / 25.4;
+            ++samples;
+        }
+        pros::delay(10);
+    }
+
+    if (samples > 0) {
+        cascadeOffsetInches = sum / samples;
+    }
+    cascadeVal = getCascadeHeight();
+}
 
 // tracking wheels
 lemlib::TrackingWheel vertical(

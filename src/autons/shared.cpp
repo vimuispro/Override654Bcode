@@ -9,19 +9,19 @@ Autons::Autons(lemlib::Chassis* chassis)
 // ========================================================================
 // Cascade lift
 // ------------------------------------------------------------------------
-// Heights use the cascade rotation sensor, the same numbers as cascadeVal
-// in driver control: 0 = bottom, LIFT_MAX = top.
-//   autons.liftTo(1200);                 // go to 1200 and WAIT until there
-//   autons.liftTo(1800, 2000, false);    // start lifting, keep driving
-//   autons.liftTo(1800, 2000, true, 80); // cap lift power at 80
+// Heights use the cascade distance sensor, in inches:
+// 0 = calibrated bottom, LIFT_MAX = top.
+//   autons.liftTo(16);                  // go to 16 inches and WAIT until there
+//   autons.liftTo(24, 2000, false);     // start lifting, keep driving
+//   autons.liftTo(24, 2000, true, 80);  // cap lift power at 80
 //   autons.liftTo(0);                    // lower past zero, or stop at the mechanical limit
 //   autons.waitUntilLiftDone();          // wait for a lift started with false
 // ========================================================================
 
-static const double LIFT_MAX       = 3000; // never go above this (same as driver limit)
-static const double LIFT_KP        = 0.5;  // speed per unit of distance left; raise if too slow
+static const double LIFT_MAX       = CASCADE_MAX_HEIGHT_INCHES;
+static const double LIFT_KP        = 4.0;  // speed per inch of distance left
 static const double LIFT_MIN_SPEED = 25;   // keeps it moving when it's almost there
-static const double LIFT_TOLERANCE = 20;   // "close enough" to the target
+static const double LIFT_TOLERANCE = 0.5; // "close enough" to the target
 static const int    LIFT_STALL_MS  = 150;  // stop waiting if the lift hasn't moved for this long
 
 static double liftTarget = 0;
@@ -54,11 +54,11 @@ void distanceReset(std::string axis, const double field_length){
 }
   */
 double Autons::liftHeight() {
-    return cascadeEnc.get_position() / 100.0;
+    return getCascadeHeight();
 }
 
 void Autons::resetLift() {
-    cascadeEnc.set_position(0);   // the lift must be all the way DOWN when this runs
+    calibrateCascadeHeight(); // the lift must be all the way DOWN when this runs
 }
 
 void Autons::liftTo(double height, int timeout, bool wait, int maxSpeed) {
@@ -74,12 +74,12 @@ void Autons::liftTo(double height, int timeout, bool wait, int maxSpeed) {
         pros::Task liftTask([] {
             while (true) {
                 if (liftActive) {
-                    const double height = cascadeEnc.get_position() / 100.0;
+                    const double height = getCascadeHeight();
                     const double error = liftTarget - height;
                     const bool bottomTarget = liftTarget <= 0;
 
                     // remember the last time the lift actually moved
-                    if (std::fabs(height - liftLastHeight) > 2) {
+                    if (std::fabs(height - liftLastHeight) > 0.25) {
                         liftLastHeight = height;
                         liftLastMoveTime = pros::millis();
                     }
@@ -87,7 +87,7 @@ void Autons::liftTo(double height, int timeout, bool wait, int maxSpeed) {
 
                     // done when: close enough, stuck (hard stop / too heavy), or out of time
                     const bool targetReached = bottomTarget
-                        ? height <= -LIFT_TOLERANCE
+                        ? height <= LIFT_TOLERANCE
                         : std::fabs(error) <= LIFT_TOLERANCE;
                     if (targetReached || stalled || pros::millis() > liftEndTime) {
                         cascadeMotors.brake();   // hold mode keeps it at this height
@@ -111,7 +111,7 @@ void Autons::liftTo(double height, int timeout, bool wait, int maxSpeed) {
     liftTarget = height;
     liftMaxSpeed = maxSpeed;
     liftEndTime = pros::millis() + timeout;
-    liftLastHeight = cascadeEnc.get_position() / 100.0;
+    liftLastHeight = getCascadeHeight();
     liftLastMoveTime = pros::millis();   // give it LIFT_STALL_MS to start moving
     liftActive = true;
 
@@ -200,7 +200,7 @@ toggle_motor.move(0);
 chassis->moveToPoint(-53.929, -19, 600, {.maxSpeed = 90}, true); 
 // move to goal and wait
 
-liftTo(1500); // lift cascade over goal
+liftTo(20.0); // lift cascade over goal
 pros::delay(300);
 liftTo(0);
 pros::delay(50);
@@ -218,12 +218,12 @@ pros::delay(100);
 closeClaw();//close the claw
 pros::delay(100);
 
-liftTo(2000);//lift cascade
+liftTo(26.67);//lift cascade
 //turn to goal
 chassis->turnToPoint(-44.3,-24.1,500,{},false);
 chassis->moveToPoint(-44.3-5,-24.1,1000,{.maxSpeed = 90},false);
 //lower cascade
-liftTo(700);
+liftTo(9.33);
 openClaw();
 liftTo(0);
 //reveres from the goal
@@ -238,11 +238,11 @@ pros::delay(600);
 closeClaw();
 pros::delay(100);
 
-liftTo(2800);//lift cascade
+liftTo(37.33);//lift cascade
 
 chassis->turnToPoint(-50.3, -30.8, 600, {},false);
 chassis->moveToPoint(-50.3, -30.8, 1000, {},false);
-liftTo(700);
+liftTo(9.33);
 openClaw();
 liftTo(0);
 */

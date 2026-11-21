@@ -2,5 +2,5 @@
 
 void Autons::auton4(){
     resetLift();
-    liftTo(3200, 5000, false);
+    liftTo(40.0, 5000, false);
 }

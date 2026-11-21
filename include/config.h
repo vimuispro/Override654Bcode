@@ -12,12 +12,13 @@ extern pros::MotorGroup rightMotors;
 // sensors
 extern pros::Imu imu;
 extern pros::Rotation verticalEnc;
-extern pros::Rotation cascadeEnc;
 extern pros::Optical colorSensor;
 extern double cascadeVal;
+extern double cascadeOffsetInches;
 extern bool isBlueTeam;
 extern pros::Distance left_distance;
 extern pros::Distance right_distance;
+extern pros::Distance cascadeDistance;
 // tracking wheels
 extern lemlib::TrackingWheel vertical;
 extern lemlib::TrackingWheel cascade;
@@ -30,6 +31,10 @@ extern pros::MotorGroup cascadeMotors;
 
 // pistons
 extern pros::adi::DigitalOut clawLift; // piston that moves the claw up/down
+
+constexpr double CASCADE_MAX_HEIGHT_INCHES = 40.0;
+double getCascadeHeight();
+void calibrateCascadeHeight();
 
 
 // drivetrain + chassis

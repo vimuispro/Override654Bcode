@@ -22,6 +22,7 @@ void initialize() {
     pros::lcd::initialize();   // optional, for PROS text
     colorSensor.set_led_pwm(100);
     cascadeMotors.set_brake_mode_all(pros::MotorBrake::hold);
+    calibrateCascadeHeight();  // bottom position: measured distance becomes the zero-height offset
     chassis.calibrate();
     // Heading 180 flips BOTH axes: driving forward from here makes Y go negative,
     // and +X / -X swap sides. (Rotating the field 180 degrees = negating X and Y.)

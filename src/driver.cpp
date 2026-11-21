@@ -75,12 +75,12 @@ void DriverControl::update() {
 
     if (!cascadeLimiterEnabled &&
         controller->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X)) {
-        cascadeEnc.set_position(0);
+        calibrateCascadeHeight();
         cascadeLimiterEnabled = true;
     }
 
 
-    cascadeVal = cascadeEnc.get_position() / 100.0;
+    cascadeVal = getCascadeHeight();
     
     if (controller->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
         clawClosed = false;
@@ -101,7 +101,7 @@ void DriverControl::update() {
         (!cascadeLimiterEnabled || cascadeVal > 0)) {
         cascadeMotors.move(127);
     } else if (controller->get_digital(pros::E_CONTROLLER_DIGITAL_R1) &&
-        (!cascadeLimiterEnabled || cascadeVal < 3900)) {
+        (!cascadeLimiterEnabled || cascadeVal < CASCADE_MAX_HEIGHT_INCHES)) {
         cascadeMotors.move(-127);
     } else {
         cascadeMotors.move(0);

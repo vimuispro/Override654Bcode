@@ -226,7 +226,7 @@ void uiUpdate() {
 
     // Update label
     lv_label_set_text(coordLabel, buf);
-    snprintf(buf, sizeof(buf), "Cascade: %.1f", cascadeVal);
+    snprintf(buf, sizeof(buf), "Cascade: %.1f in", cascadeVal);
     lv_label_set_text(cascadeLabel, buf);
     pros::delay(50);
 
