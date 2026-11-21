@@ -118,7 +118,7 @@ void DriverControl::update() {
     }
     pros::delay(25);
 
-    if (controller->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
+    if (controller->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
         clawClosed = !clawClosed;
         if (clawClosed) {
             autons.startClosingClaw();
@@ -127,10 +127,7 @@ void DriverControl::update() {
         }
     }
 
-    if (controller->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
-        clawLiftState = !clawLiftState; // B moves the claw up/down
-        clawLift.set_value(clawLiftState);
-    }
+   
     const bool downHeld = controller->get_digital(pros::E_CONTROLLER_DIGITAL_DOWN);
     if (controller->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
         teamColorSearchActive = true;

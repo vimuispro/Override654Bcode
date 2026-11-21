@@ -79,7 +79,7 @@ void  autonomous() {
             break;
 
         default:
-            autons.skillsAuton(); // fallback
+            autons.auton2(); // fallback
             break;
     }
 }

@@ -142,12 +142,9 @@ void Autons::waitUntilLiftDone() {
 // Runs in the background so the robot can start driving right away
 // (before, the whole auton waited 200ms per rotation here).
 void Autons::toggle(int rotations) {
-    const int ms = 200 * rotations;
-    pros::Task([ms] {
-        toggle_motor.move(127);
-        pros::delay(ms);
-        toggle_motor.move(0);
-    });
+    toggle_motor.move(127);
+    pros::delay(200 * rotations);
+    toggle_motor.move(0);
 }
 
 void Autons::openClaw(int waitMs) {
@@ -217,50 +214,56 @@ void Autons::rightSideOpening() {
     closeClaw(0); // close claw on the preload; it keeps closing while the robot starts moving
 
     chassis->setPose(-61.648, -0.646, 90);
-    liftTo(13.33, 2000, false);
+    liftTo(4.3, 2000, false);
     toggle(2);
 
-    chassis->moveToPoint(-47, -8.6, 1000, {.maxSpeed = 127, .minSpeed = 80, .earlyExitRange = 5}, true);
-    chassis->moveToPoint(-47.5, -18.193, 1000, {.minSpeed = 100}, false);
+    chassis->moveToPoint(-45, -8.6, 1000, {.maxSpeed = 100, .minSpeed = 80, .earlyExitRange = 5}, true);
+    chassis->moveToPoint(-47.5, -18.193, 1000, {.maxSpeed = 100, .minSpeed = 50}, false);
 
-    pushFor(100, 100, 500);  // square up on the goal
+    pushFor(80, 80, 500);  // square up on the goal
 
-    liftTo(5.33);
+    liftTo(0);
     openClaw();
+    
     chassis->setPose(-47, -18.6, chassis->getPose().theta);
 
     chassis->moveToPoint(-47, 0, 900, {.forwards = false}, false);
     // fast approach, then exit 20" out and finish slowly
     // (earlyExitRange does nothing without minSpeed, so before this the move just ran out its 500ms timeout)
     chassis->moveToPoint(-28.478, -20.31, 1000, {.minSpeed = 50, .earlyExitRange = 20}, true);
-    chassis->moveToPoint(-27, -21, 800, {.maxSpeed = 50}, false);
+    chassis->moveToPoint(-27, -21, 1000, {.maxSpeed = 50}, false);
 
     closeClaw();
 
     chassis->moveToPoint(-25, -25, 1000, {.maxSpeed = 127, .minSpeed = 80, .earlyExitRange = 1}, true);
-    liftTo(20.0);
+    liftTo(7.0);
     chassis->moveToPoint(-41.2, -23.8, 2000, {.minSpeed = 80}, false);
 
     // swing into the goal while the lift comes down. Before, the swing ran for however long
     // the lift took and was never stopped. TUNE the 300ms on the robot.
-    liftTo(5.33, 2000, false);
+    liftTo(4.33, 2000, false);
     pushFor(10, 120, 300);
     waitUntilLiftDone();
     openClaw();
 
-    chassis->setPose(-41, -23, chassis->getPose().theta - 1);
+    chassis->setPose(-41, -23, chassis->getPose().theta);
 
-    chassis->moveToPoint(-28, -25, 1500, {.forwards = false}, false);  // timeout was 5000
-    chassis->moveToPoint(-43, -43, 1000, {.minSpeed = 50, .earlyExitRange = 20}, true);
-    chassis->moveToPoint(-45, -41, 2000, {.maxSpeed = 50}, false);
+    liftTo(0, 2000, false);
+
+    chassis->moveToPoint(-20, -24, 1500, {.forwards = false}, false);  // timeout was 5000
+    chassis->moveToPoint(-35, -35, 1000, {.maxSpeed = 100, .minSpeed = 50, .earlyExitRange = 5}, true);
+    chassis->moveToPoint(-42, -42, 2000, {.maxSpeed = 50}, false);
 
     closeClaw();
 
     // lift while turning instead of standing still, but make sure it's up before driving in
-    liftTo(26.67, 2000, false);
+    liftTo(14, 2000, false);
     chassis->turnToPoint(-47.183, -23, 1000, {}, false);
     waitUntilLiftDone();
     chassis->moveToPoint(-47.183, -23, 1000, {.maxSpeed = 60, .minSpeed = 50}, false);
-    liftTo(13.33);
+    liftTo(7, 2000, false);
+    pushFor(100, 0, 800);
+    waitUntilLiftDone();
     openClaw();
+    
 }

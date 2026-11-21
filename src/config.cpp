@@ -12,7 +12,7 @@ pros::MotorGroup leftMotors({-10, 6}, pros::MotorGearset::blue);
 pros::MotorGroup rightMotors({-5, 1}, pros::MotorGearset::blue);
 pros::Distance left_distance(0);
 pros::Distance right_distance(0);
-pros::Distance cascadeDistance(18);
+pros::Distance cascadeDistance(17);
 // sensors
 pros::Imu imu(7);
 pros::Rotation verticalEnc(2); // keep POSITIVE
