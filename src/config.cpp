@@ -31,6 +31,9 @@ double getCascadeHeight() {
     double height = std::fabs(readingInches - cascadeOffsetInches);
     if (height < 0.0) height = 0.0;
     if (height > CASCADE_MAX_HEIGHT_INCHES) height = CASCADE_MAX_HEIGHT_INCHES;
+    // keep the value shown on the screen fresh. Before, only driver control updated it,
+    // so during an auton the screen stayed stuck at 0.
+    cascadeVal = height;
     return height;
 }
 
