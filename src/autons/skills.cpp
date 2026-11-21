@@ -15,7 +15,7 @@ struct PinCycle {
 };
 const PinCycle pinCycles[] = {
     {33.33, 2000, false, 24.0},
-    {40.0, 5000, true, 30.67},
+    {36.0, 5000, true, 30.67},   // 36 = top (was 40, which the lift can never reach)
 };
 for (const PinCycle& pin : pinCycles) {
     chassis->moveToPoint(-47, -59, 1000, {.forwards = false}, false);

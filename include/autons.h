@@ -9,7 +9,7 @@ public:
     Autons(lemlib::Chassis* chassis);
 
     // ---- Cascade lift (uses the distance sensor, port 18) ----
-    // Heights are in inches: 0 = calibrated bottom, 40 = top.
+    // Heights are in inches: 0 = calibrated bottom, 36 = top.
     void resetLift();                                          // call with the lift at the BOTTOM
     void liftTo(double height, int timeout = 2000, bool wait = true, int maxSpeed = 127);
     void waitUntilLiftDone();
