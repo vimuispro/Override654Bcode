@@ -21,6 +21,7 @@ static lv_obj_t* auton4Btn;
 static lv_obj_t* testBtn;
 static lv_obj_t* coordLabel;
 static lv_obj_t* cascadeLabel;
+static lv_obj_t* liftDebugLabel;
 
 // Styles
 static lv_style_t selectedStyle;
@@ -59,6 +60,9 @@ void buildHomeScreen() {
     cascadeLabel = lv_label_create(homeScreen);
     lv_label_set_text(cascadeLabel, "Cascade: 0");
     lv_obj_set_pos(cascadeLabel, 10, 30);
+    liftDebugLabel = lv_label_create(homeScreen);
+    lv_label_set_text(liftDebugLabel, "Lift: -");
+    lv_obj_set_pos(liftDebugLabel, 10, 50);
 
 }
 
@@ -228,6 +232,9 @@ void uiUpdate() {
     lv_label_set_text(coordLabel, buf);
     snprintf(buf, sizeof(buf), "Cascade: %.1f in", getCascadeHeight()); // read the sensor live
     lv_label_set_text(cascadeLabel, buf);
+    snprintf(buf, sizeof(buf), "Lift: %s  raw: %ld mm  bad: %d",
+             liftStopReason, static_cast<long>(cascadeRawMm), cascadeBadReads);
+    lv_label_set_text(liftDebugLabel, buf);
     pros::delay(50);
 
 }

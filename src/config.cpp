@@ -20,10 +20,15 @@ pros::Optical colorSensor(20);
 double cascadeVal = 0.0;
 double cascadeOffsetInches = 0.0;
 bool isBlueTeam = true;
+std::int32_t cascadeRawMm = 0;
+int cascadeBadReads = 0;
+const char* liftStopReason = "-";
 
 double getCascadeHeight() {
     const std::int32_t readingMm = cascadeDistance.get();
+    cascadeRawMm = readingMm;
     if (readingMm == PROS_ERR || readingMm <= 0 || readingMm >= 9999) {
+        ++cascadeBadReads;   // sensor can't see the lift: reuse the last good height
         return cascadeVal;
     }
 
