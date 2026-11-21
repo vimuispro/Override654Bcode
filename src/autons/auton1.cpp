@@ -3,7 +3,7 @@
 //-----------------------------------------------------------A1: LEFT Side Auton--------------------------------------------
 void Autons::auton1(){
 resetLift();
-closeClaw(); // close claw to hold preload
+closeClaw(0); // close claw on the preload; it keeps closing while the robot starts moving
 
 chassis->setPose(1, -61.7, 0);
 liftTo(9.33, 2000, false);

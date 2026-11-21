@@ -19,13 +19,15 @@ Autons::Autons(lemlib::Chassis* chassis)
 // ========================================================================
 
 static const double LIFT_MAX       = CASCADE_MAX_HEIGHT_INCHES;
-static const double LIFT_KP        = 6.0;  // speed per inch of distance left (was 4: crept slowly at the end)
 // Going UP the lift always uses full power (liftMaxSpeed): any less and it can't lift itself near
 // the top (it stalled at 33" even with 60). Gravity stops it fast when the power cuts, so it
 // doesn't overshoot much. If it DOES go past the target going up, raise LIFT_UP_EARLY_STOP.
 static const double LIFT_UP_EARLY_STOP = 0.0;  // inches before the target to cut power going up
-// Going DOWN gravity helps, so it slows near the target and keeps at least this much power:
-static const double LIFT_MIN_SPEED_DOWN = 35;
+// Going DOWN it slows near the target but keeps at least LIFT_MIN_SPEED_DOWN power.
+// 35 was too weak: the lift stopped moving before reaching its height.
+// TUNE: if it still stops short going down, raise LIFT_MIN_SPEED_DOWN; if it goes past, lower it.
+static const double LIFT_KP_DOWN        = 10.0;  // speed per inch left, going down
+static const double LIFT_MIN_SPEED_DOWN = 70;
 static const double LIFT_TOLERANCE = 0.5;  // "close enough" to the target
 // Stall check: if the lift moves less than LIFT_STALL_DIST inches in LIFT_STALL_MS, it's treated
 // as stuck and the move ends. Was 150ms, which ended slow moves early at the wrong height.
@@ -85,8 +87,8 @@ void Autons::liftTo(double height, int timeout, bool wait, int maxSpeed) {
                     } else {
                         double speed = liftMaxSpeed;   // going up: full power the whole way
                         if (!goingUp) {
-                            // going down: slow down near the target
-                            speed = LIFT_KP * std::fabs(error);
+                            // going down: slow down near the target (but never below LIFT_MIN_SPEED_DOWN)
+                            speed = LIFT_KP_DOWN * std::fabs(error);
                             if (speed > liftMaxSpeed) speed = liftMaxSpeed;
                             const double minSpeed = liftMaxSpeed < LIFT_MIN_SPEED_DOWN
                                 ? liftMaxSpeed : LIFT_MIN_SPEED_DOWN;
@@ -124,10 +126,15 @@ void Autons::waitUntilLiftDone() {
     while (liftActive) pros::delay(10);
 }
 
+// Runs in the background so the robot can start driving right away
+// (before, the whole auton waited 200ms per rotation here).
 void Autons::toggle(int rotations) {
-    toggle_motor.move(127);
-    pros::delay(200*rotations);
-    toggle_motor.move(0);
+    const int ms = 200 * rotations;
+    pros::Task([ms] {
+        toggle_motor.move(127);
+        pros::delay(ms);
+        toggle_motor.move(0);
+    });
 }
 
 void Autons::openClaw(int waitMs) {
@@ -194,7 +201,7 @@ void Autons::updateClaw() {
 // ========================================================================
 void Autons::rightSideOpening() {
     resetLift();
-    closeClaw(); // close claw to hold preload
+    closeClaw(0); // close claw on the preload; it keeps closing while the robot starts moving
 
     chassis->setPose(-61.648, -0.646, 90);
     liftTo(13.33, 2000, false);
