@@ -7,7 +7,7 @@
 void Autons::auton3(){
 
 resetLift();
-closeClaw(); // close claw to hold preload
+closeClaw(0); // close claw on the preload; it keeps closing while the robot starts moving
 
 chassis->setPose(-61.648, -0.646, 90);
 liftTo(13.33, 2000, false);
