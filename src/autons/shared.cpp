@@ -229,7 +229,7 @@ void Autons::rightSideOpening() {
     
     chassis->setPose(-47, -18.6, chassis->getPose().theta);
 
-    chassis->moveToPoint(-47, 0, 900, {.forwards = false}, false);
+    chassis->moveToPoint(-47, 0, 900, { .forwards = false, .maxSpeed = 100}, false);
     // fast approach, then exit 20" out and finish slowly
     // (earlyExitRange does nothing without minSpeed, so before this the move just ran out its 500ms timeout)
     chassis->moveToPoint(-28.478, -20.31, 1000, {.minSpeed = 50, .earlyExitRange = 20}, true);
@@ -252,7 +252,7 @@ void Autons::rightSideOpening() {
 
     liftTo(0, 2000, false);
 
-    chassis->moveToPoint(-20, -24, 1500, {.forwards = false}, false);  // timeout was 5000
+    chassis->moveToPoint(-20, -24, 1500, {.forwards = false, .maxSpeed = 100}, false);  // timeout was 5000
     chassis->moveToPoint(-35, -35, 1000, {.maxSpeed = 100, .minSpeed = 50, .earlyExitRange = 5}, true);
     chassis->moveToPoint(-42, -42, 2000, {.maxSpeed = 50}, false);
 
@@ -264,7 +264,7 @@ void Autons::rightSideOpening() {
     waitUntilLiftDone();
     chassis->moveToPoint(-47.183, -23, 1000, {.maxSpeed = 60, .minSpeed = 50}, false);
     liftTo(7, 2000, false);
-    pushFor(100, 0, 800);
+    pushFor(127, -10, 800);
     waitUntilLiftDone();
     openClaw();
     

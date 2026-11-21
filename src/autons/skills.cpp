@@ -4,9 +4,16 @@
 void Autons::skillsAuton() {
 
 rightSideOpening();  // same start as auton2 (shared.cpp)
+pushFor(127, -10, 800);
+pushFor(127, 127, 200);
+chassis->setPose(-47, -28, chassis->getPose().theta); //set new pose
 
-chassis->setPose(-47, -28, chassis->getPose().theta - 1); //set new pose
 
+}
+
+
+
+/*
 struct PinCycle {
     double liftHeight;
     int liftTimeout;
@@ -78,4 +85,4 @@ for (const CupCycle& cup : cupCycles) {
     }
 }
 }
-//-----------------------------------------------------------SKILLS AUTON--------------------------------------------
+*/
