@@ -83,6 +83,8 @@ void Autons::liftTo(double height, int timeout, bool wait, int maxSpeed) {
                         liftLastHeight = height;
                         liftLastMoveTime = pros::millis();
                     }
+                    // while the sensor is blocked the height is frozen, so don't call that a stall
+                    if (cascadeSensorBlocked) liftLastMoveTime = pros::millis();
                     const bool stalled = pros::millis() - liftLastMoveTime > LIFT_STALL_MS;
 
                     // done when: close enough, stuck (hard stop / too heavy), or out of time
@@ -139,8 +141,8 @@ void Autons::waitUntilLiftDone() {
     while (liftActive) pros::delay(10);
 }
 
-// Runs in the background so the robot can start driving right away
-// (before, the whole auton waited 200ms per rotation here).
+// Blocks: the drivetrain must NOT move while the toggle motor is flipping the toggle.
+// Start the lift and claw BEFORE calling this so they move during the flip.
 void Autons::toggle(int rotations) {
     toggle_motor.move(127);
     pros::delay(200 * rotations);
