@@ -2,19 +2,8 @@
 
 //-----------------------------------------------------------A1: LEFT Side Auton--------------------------------------------
 void Autons::auton1(){
-resetLift();
-closeClaw(0); // close claw on the preload; it keeps closing while the robot starts moving
+goalStart(true);  // same start as auton2, mirrored (shared.cpp). Ends at (-18.6, -47).
 
-chassis->setPose(1, -61.7, 0);
-liftTo(9.33, 2000, false);
-toggle(2);
-
-chassis->moveToPoint(-9, -49, 1000,{.maxSpeed = 127, .minSpeed = 80, .earlyExitRange = 5},true);
-chassis->moveToPoint(-18.193, -49, 1000,{.minSpeed = 100},false);
-
-liftTo(4.0);
-openClaw();
-chassis->setPose(-18.6, -47, chassis->getPose().theta);
 chassis->moveToPoint(-9, -47, 1000,{.forwards = false},false);
 
 liftTo(0, 2000, false);  // lower while turning instead of standing still
