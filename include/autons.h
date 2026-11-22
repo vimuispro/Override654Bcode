@@ -62,6 +62,4 @@ private:
 
     // first part of auton2 / skills (identical in both, so it lives in one place)
     void rightSideOpening();
-    // preload onto the first goal; mirror = false for auton2/right, true for auton1/left
-    void goalStart(bool mirror);
 };
