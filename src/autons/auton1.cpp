@@ -2,7 +2,23 @@
 
 //-----------------------------------------------------------A1: LEFT Side Auton--------------------------------------------
 void Autons::auton1(){
-goalStart(true);  // same start as auton2, mirrored (shared.cpp). Ends at (-18.6, -47).
+resetLift();
+closeClaw(0); // close claw on the preload; it keeps closing while the robot starts moving
+
+// same start as auton2, mirrored: X and Y swapped, heading = 90 - auton2's heading
+chassis->setPose(-0.646, -61.648, 0);
+liftTo(4.3, 2000, false);
+toggle(2);
+
+chassis->moveToPoint(-8.6, -45, 1000, {.maxSpeed = 100, .minSpeed = 80, .earlyExitRange = 5}, true);
+chassis->moveToPoint(-18.193, -47.5, 1000, {.maxSpeed = 100, .minSpeed = 50}, false);
+
+pushFor(80, 80, 500);  // square up on the goal
+
+liftTo(0);
+openClaw();
+
+chassis->setPose(-18.6, -47, chassis->getPose().theta);
 
 chassis->moveToPoint(-9, -47, 1000,{.forwards = false},false);
 
