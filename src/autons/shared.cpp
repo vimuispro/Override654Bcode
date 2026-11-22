@@ -211,23 +211,42 @@ void Autons::updateClaw() {
 // auton2 and skillsAuton both start with exactly this. Fix/tune it HERE and
 // both routines get the change.
 // ========================================================================
-void Autons::rightSideOpening() {
+// ========================================================================
+// Start: preload onto the first goal
+// ------------------------------------------------------------------------
+// auton2 (right side) and auton1 (left side) start the same way, mirrored
+// across the field diagonal: X and Y swap, and heading h becomes 90 - h.
+// Write the numbers for auton2 here; mirror = true gives auton1's version.
+// ========================================================================
+void Autons::goalStart(bool mirror) {
+    // (x, y) as written for auton2 -> swapped for auton1
+    auto pt = [mirror](double x, double y) { return mirror ? lemlib::Pose(y, x) : lemlib::Pose(x, y); };
+    auto heading = [mirror](double h) { return mirror ? 90 - h : h; };
+
     resetLift();
     closeClaw(0); // close claw on the preload; it keeps closing while the robot starts moving
 
-    chassis->setPose(-61.648, -0.646, 90);
+    const lemlib::Pose start = pt(-61.648, -0.646);
+    chassis->setPose(start.x, start.y, heading(90));
     liftTo(4.3, 2000, false);
     toggle(2);
 
-    chassis->moveToPoint(-45, -8.6, 1000, {.maxSpeed = 100, .minSpeed = 80, .earlyExitRange = 5}, true);
-    chassis->moveToPoint(-47.5, -18.193, 1000, {.maxSpeed = 100, .minSpeed = 50}, false);
+    const lemlib::Pose p1 = pt(-45, -8.6);
+    chassis->moveToPoint(p1.x, p1.y, 1000, {.maxSpeed = 100, .minSpeed = 80, .earlyExitRange = 5}, true);
+    const lemlib::Pose p2 = pt(-47.5, -18.193);
+    chassis->moveToPoint(p2.x, p2.y, 1000, {.maxSpeed = 100, .minSpeed = 50}, false);
 
-    pushFor(80, 80, 500);  // square up on the goal
+    pushFor(80, 80, 500);  // square up on the goal (if you make this uneven, swap left/right when mirror is true)
 
     liftTo(0);
     openClaw();
-    
-    chassis->setPose(-47, -18.6, chassis->getPose().theta);
+
+    const lemlib::Pose atGoal = pt(-47, -18.6);
+    chassis->setPose(atGoal.x, atGoal.y, chassis->getPose().theta);
+}
+
+void Autons::rightSideOpening() {
+    goalStart(false);  // preload onto the first goal (shared with auton1, mirrored)
 
     chassis->moveToPoint(-47, 0, 900, { .forwards = false, .maxSpeed = 100}, false);
     // fast approach, then exit 20" out and finish slowly
