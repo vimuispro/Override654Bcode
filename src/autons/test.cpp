@@ -41,6 +41,8 @@ void Autons::testAuton() {
     chassis->moveToPoint(0, 0, 2000,{.maxSpeed = 127});
     chassis->waitUntilDone(); 
     */
+    chassis->setPose(-59, -62, 0);   // where you put the robot
+   distanceReset();
 }
 //-----------------------------------------------------------PID TEST AUTON-----------------------------------------
 

@@ -30,8 +30,8 @@ struct DistanceSensorMount {
     double forward;
     double angle;   // which way it points, relative to the robot's front: 0 front, 90 right, 180 back, -90 left
 };
-constexpr DistanceSensorMount LEFT_DISTANCE_MOUNT = { -6.0,  0.0, -90 };  // TUNE
-constexpr DistanceSensorMount BACK_DISTANCE_MOUNT = {  0.0, -6.0, 180 };  // TUNE
+constexpr DistanceSensorMount LEFT_DISTANCE_MOUNT = { -4.75,  0.0, -90 };  // TUNE
+constexpr DistanceSensorMount BACK_DISTANCE_MOUNT = {  -3.4, -2.0, 180 };  // TUNE
 // Distance from the field center to the INSIDE face of each wall, in inches.
 // TUNE: a VEX field is about 140.4" inside, so 70.2. Measure yours if resets are off by a constant amount.
 constexpr double FIELD_WALL = 70.2;

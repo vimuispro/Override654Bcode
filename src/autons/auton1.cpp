@@ -20,8 +20,7 @@ openClaw();
 
 chassis->setPose(-18.6, -47, chassis->getPose().theta);
 
-chassis->moveToPoint(-9, -47, 1000,{.forwards = false},false);
-
+/*
 liftTo(0, 2000, false);  // lower while turning instead of standing still
 chassis->turnToHeading(-135, 500,{}, true);
 // keep speed into the push below (earlyExitRange does nothing without minSpeed)
@@ -31,6 +30,7 @@ waitUntilLiftDone();     // lift must be down before grabbing
 chassis->tank(127,127,true);
 pros::delay(600);
 closeClaw();             // keep pushing while the claw grips
+
 chassis->tank(0,0,true); // was left running during the lift
 liftTo(10.67, 900, false);
 
@@ -60,5 +60,5 @@ liftTo(20.0);
 chassis->moveToPoint(23, -47, 1000,{.maxSpeed = 60},false);
 liftTo(4.0);
 openClaw();
-
+*/
 }

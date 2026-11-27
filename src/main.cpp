@@ -79,7 +79,7 @@ void  autonomous() {
             break;
 
         default:
-            autons.auton2(); // fallback
+            autons.auton1(); // fallback
             break;
     }
 }

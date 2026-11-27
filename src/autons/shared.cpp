@@ -254,7 +254,7 @@ void Autons::rightSideOpening() {
 
     chassis->moveToPoint(-20, -24, 1500, {.forwards = false, .maxSpeed = 100}, false);  // timeout was 5000
     chassis->moveToPoint(-35, -35, 1000, {.maxSpeed = 100, .minSpeed = 50, .earlyExitRange = 5}, true);
-    chassis->moveToPoint(-42, -42, 2000, {.maxSpeed = 50}, false);
+    chassis->moveToPoint(-43, -43, 2000, {.maxSpeed = 50}, false);
 
     closeClaw();
 
@@ -264,7 +264,7 @@ void Autons::rightSideOpening() {
     waitUntilLiftDone();
     chassis->moveToPoint(-47.183, -23, 1000, {.maxSpeed = 60, .minSpeed = 50}, false);
     liftTo(7, 2000, false);
-    pushFor(127, -10, 800);
+    pushFor(127, 10, 1000);
     waitUntilLiftDone();
     openClaw();
     
