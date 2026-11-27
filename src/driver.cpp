@@ -39,9 +39,7 @@ void DriverControl::update() {
     static bool cascadeMacroRunning = false;
     static bool clawClosed = true;
     static bool clawLiftState = true; // matches the starting state of clawLift in config.cpp
-    if (controller->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_LEFT)) {
-        drivetrainReversed = !drivetrainReversed;
-    }
+
 
     if (controller->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
         isBlueTeam = !isBlueTeam;
@@ -61,7 +59,7 @@ void DriverControl::update() {
     }
     //---------------------------Test----------------------------------------
     // Autonomous turn test on button press up
-    if (controller->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
+    if (controller->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_LEFT)) {
     driverControlEnabled = false; // turn off driver control 
     autonomous(); // run auton
     // LemLib moves run in the BACKGROUND by default, so autonomous() can return while the
@@ -82,23 +80,22 @@ void DriverControl::update() {
 
     cascadeVal = getCascadeHeight();
     
-    if (controller->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
+    if (controller->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
         clawClosed = false;
         autons.startOpeningClaw(); // Y macro opens the claw
         chassis->tank(-127,-127, 800); // back up a little
-        cascadeMacroRunning = cascadeVal > 0;
+        cascadeMacroRunning = cascadeVal > CASCADE_MIN_HEIGHT_INCHES;
     }
 
     if (cascadeMacroRunning) {
-        if (cascadeVal > 0) {
+        if (cascadeVal > CASCADE_MIN_HEIGHT_INCHES) {
             cascadeMotors.move(127);
         } else {
             cascadeMacroRunning = false;
             cascadeMotors.move(0);
         }
-        
     } else if (controller->get_digital(pros::E_CONTROLLER_DIGITAL_R2) &&
-        (!cascadeLimiterEnabled || cascadeVal > 0)) {
+        (!cascadeLimiterEnabled || cascadeVal > CASCADE_MIN_HEIGHT_INCHES)) {
         cascadeMotors.move(127);
     } else if (controller->get_digital(pros::E_CONTROLLER_DIGITAL_R1) &&
         (!cascadeLimiterEnabled || cascadeVal < CASCADE_MAX_HEIGHT_INCHES)) {
@@ -111,8 +108,6 @@ void DriverControl::update() {
 
     if (controller->get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
         intake_motor.move(127);
-    } else if (controller->get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
-        intake_motor.move(-127);
     } else {
         intake_motor.move(0);
     }
@@ -122,11 +117,26 @@ void DriverControl::update() {
         clawClosed = !clawClosed;
         if (clawClosed) {
             autons.startClosingClaw();
+            autons.pushFor(-127, -127, 100); // push forward a little to make sure the claw grips the preload
+            const std::uint32_t moveUntil = pros::millis() + 500;
+            while (pros::millis() < moveUntil &&
+                   getCascadeHeight() < CASCADE_MIN_HEIGHT_INCHES) {
+                cascadeMotors.move(-90);
+                pros::delay(50);
+            }
+            cascadeMotors.move(0);
         } else {
             autons.startOpeningClaw();
         }
     }
-
+    if (controller->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)) {
+        clawClosed = !clawClosed;
+        if (clawClosed) {
+            autons.startClosingClaw();
+        } else {
+            autons.startOpeningClaw();
+        }
+    }
    
     const bool downHeld = controller->get_digital(pros::E_CONTROLLER_DIGITAL_DOWN);
     if (controller->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {

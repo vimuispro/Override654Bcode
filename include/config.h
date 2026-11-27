@@ -50,6 +50,7 @@ extern pros::MotorGroup cascadeMotors;
 extern pros::adi::DigitalOut clawLift; // piston that moves the claw up/down
 
 constexpr double CASCADE_MAX_HEIGHT_INCHES = 36.0; // measured top of the lift
+constexpr double CASCADE_MIN_HEIGHT_INCHES = 1.0;  // bottom stop height
 double getCascadeHeight();
 // lift debugging (shown on the brain screen)
 extern std::int32_t cascadeRawMm;   // last raw distance sensor reading, in mm

@@ -10,16 +10,51 @@ chassis->setPose(-0.646, -61.648, 0);
 liftTo(4.3, 2000, false);
 toggle(2);
 
-chassis->moveToPoint(-8.6, -45, 1000, {.maxSpeed = 100, .minSpeed = 80, .earlyExitRange = 5}, true);
-chassis->moveToPoint(-18.193, -47.5, 1000, {.maxSpeed = 100, .minSpeed = 50}, false);
+chassis->moveToPoint(-8.6, -47, 1000, {.maxSpeed = 100, .minSpeed = 80, .earlyExitRange = 5}, true);
+chassis->moveToPoint(-18.193, -48, 1000, {.maxSpeed = 100, .minSpeed = 50}, false);
 
 pushFor(80, 80, 500);  // square up on the goal
 
 liftTo(0);
 openClaw();
 
-chassis->setPose(-18.6, -47, chassis->getPose().theta);
+distanceReset();  // fix X and/or Y from the distance sensors, if possible
+chassis->moveToPoint(0, -47, 1000, {.forwards = false, .maxSpeed = 100}, false);
+chassis->turnToPoint(-16, -60, 1000, {}, false);
+chassis->moveToPoint(-16, -60, 1000, { .maxSpeed = 100}, false);
 
+pushFor(100, 100, 600);
+closeClaw(0);
+
+chassis->turnToHeading(-90, 1000, {}, false);
+distanceReset();
+liftTo(7);
+chassis->moveToPoint(0, -58, 1000, {.forwards = false, .maxSpeed = 100}, false);
+waitUntilLiftDone();
+chassis->moveToPoint(-21, -49, 1000, {.maxSpeed = 70}, false);
+liftTo(4);
+waitUntilLiftDone();
+openClaw();
+
+distanceReset();
+chassis->moveToPoint(-13, -55, 1000, {.forwards = false, .maxSpeed = 100}, false);
+chassis->moveToPoint(13, -47, 1000, {.forwards = false, .maxSpeed = 100}, false);
+chassis->turnToPoint(24.5, -56, 1000, {}, false);
+chassis->moveToPoint(24.5, -56, 1000, { .maxSpeed = 100}, false);
+
+pushFor(100, 100, 600);
+closeClaw(0);
+
+chassis->turnToHeading(90, 1000, {}, false);
+distanceReset();
+liftTo(9);
+
+chassis->moveToPoint(0, -58, 1000, {.forwards = false, .maxSpeed = 100}, false);
+waitUntilLiftDone();
+chassis->moveToPoint(21, -49, 1000, {.maxSpeed = 70}, false);
+liftTo(4);
+waitUntilLiftDone();
+openClaw();
 /*
 liftTo(0, 2000, false);  // lower while turning instead of standing still
 chassis->turnToHeading(-135, 500,{}, true);
