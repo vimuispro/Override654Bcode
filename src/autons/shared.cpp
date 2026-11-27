@@ -28,6 +28,10 @@ static const double LIFT_UP_EARLY_STOP = 0.0;  // inches before the target to cu
 // TUNE: if it still stops short going down, raise LIFT_MIN_SPEED_DOWN; if it goes past, lower it.
 static const double LIFT_KP_DOWN        = 10.0;  // speed per inch left, going down
 static const double LIFT_MIN_SPEED_DOWN = 70;
+// liftTo(0) (or anything at/below CASCADE_MIN_HEIGHT_INCHES) means "all the way down": it uses
+// this power the whole way and ends when the lift hits the bottom (stops moving).
+// TUNE: lower it (e.g. 100) if it slams into the bottom too hard.
+static const double LIFT_BOTTOM_SPEED   = 127;
 static const double LIFT_TOLERANCE = 0.5;  // "close enough" to the target
 // Stall check: if the lift moves less than LIFT_STALL_DIST inches in LIFT_STALL_MS, it's treated
 // as stuck and the move ends. Was 150ms, which ended slow moves early at the wrong height.
@@ -86,7 +90,10 @@ void Autons::liftTo(double height, int timeout, bool wait, int maxSpeed) {
                         liftActive = false;
                     } else {
                         double speed = liftMaxSpeed;   // going up: full power the whole way
-                        if (!goingUp) {
+                        if (!goingUp && liftTarget <= CASCADE_MIN_HEIGHT_INCHES) {
+                            speed = LIFT_BOTTOM_SPEED;  // all the way down: don't slow down
+                            if (speed > liftMaxSpeed) speed = liftMaxSpeed;
+                        } else if (!goingUp) {
                             // going down: slow down near the target (but never below LIFT_MIN_SPEED_DOWN)
                             speed = LIFT_KP_DOWN * std::fabs(error);
                             if (speed > liftMaxSpeed) speed = liftMaxSpeed;
