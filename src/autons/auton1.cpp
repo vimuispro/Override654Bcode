@@ -22,27 +22,28 @@ chassis->moveToPoint(0, -47, 1000, {.forwards = false, .maxSpeed = 100}, false);
 chassis->turnToPoint(-16, -60, 1000, {}, false);
 chassis->moveToPoint(-16, -60, 1000, { .maxSpeed = 100}, false);
 
-pushFor(100, 100, 600);
+pushFor(127, 127, 600);
 closeClaw(0);
 
 chassis->turnToHeading(-90, 1000, {}, false);
 distanceReset();
 liftTo(8);
-chassis->moveToPoint(0, -58, 1000, {.forwards = false, .maxSpeed = 100}, false);
+chassis->moveToPoint(10, -58, 1000, {.forwards = false, .maxSpeed = 100}, false);
 waitUntilLiftDone();
 chassis->moveToPoint(-21, -49, 1000, {.maxSpeed = 70}, false);
-pushFor(100, 100, 1000);
+pushFor(800, 80, 500);
 liftTo(4);
 waitUntilLiftDone();
 openClaw();
 
 distanceReset();
+liftTo(0);
 chassis->moveToPoint(-13, -55, 1000, {.forwards = false, .maxSpeed = 100}, false);
 chassis->moveToPoint(13, -47, 1000, {.forwards = false, .maxSpeed = 100}, false);
 chassis->turnToPoint(24.5, -56, 1000, {}, false);
 chassis->moveToPoint(24.5, -56, 1000, { .maxSpeed = 100}, false);
 
-pushFor(100, 100, 600);
+pushFor(127, 127, 600);
 closeClaw(0);
 
 chassis->turnToHeading(90, 1000, {}, false);
