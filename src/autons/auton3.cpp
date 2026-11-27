@@ -6,7 +6,6 @@
 // needed, replace lines up to "end of opening" with rightSideOpening().
 void Autons::auton3(){
 
-resetLift();
 closeClaw(0); // close claw on the preload; it keeps closing while the robot starts moving
 
 chassis->setPose(-61.648, -0.646, 90);

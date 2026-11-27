@@ -73,8 +73,7 @@ void DriverControl::update() {
 
     if (!cascadeLimiterEnabled &&
         controller->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X)) {
-        calibrateCascadeHeight();
-        cascadeLimiterEnabled = true;
+        cascadeLimiterEnabled = true;  // X turns on the height limits (no re-zeroing)
     }
 
 

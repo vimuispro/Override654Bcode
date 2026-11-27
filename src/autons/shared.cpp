@@ -10,7 +10,7 @@ Autons::Autons(lemlib::Chassis* chassis)
 // Cascade lift
 // ------------------------------------------------------------------------
 // Heights use the cascade distance sensor, in inches:
-// 0 = calibrated bottom, LIFT_MAX = top.
+// height = sensor reading - CASCADE_ZERO_INCHES (config.h), LIFT_MAX = top.
 //   autons.liftTo(16);                  // go to 16 inches and WAIT until there
 //   autons.liftTo(24, 2000, false);     // start lifting, keep driving
 //   autons.liftTo(24, 2000, true, 80);  // cap lift power at 80
@@ -47,20 +47,6 @@ double Autons::liftHeight() {
     return getCascadeHeight();
 }
 
-// Sets the current lift position as height 0. Only does it if the lift looks like it's at
-// (or below) the bottom: if an earlier run left the lift UP, re-zeroing there would make
-// the code think the top is 0, and then it only ever tries to go up.
-void Autons::resetLift() {
-    const std::int32_t readingMm = cascadeDistance.get();
-    const bool goodReading = readingMm != PROS_ERR && readingMm > 0 && readingMm < 9999;
-    const bool calibratedBefore = cascadeOffsetInches > 0;
-    if (goodReading && calibratedBefore &&
-        static_cast<double>(readingMm) / 25.4 > cascadeOffsetInches + 2.0) {
-        liftStopReason = "not reset: lift was up";  // keep the old zero
-        return;
-    }
-    calibrateCascadeHeight();
-}
 
 void Autons::liftTo(double height, int timeout, bool wait, int maxSpeed) {
     // clamp the target between the bottom and the top
@@ -213,7 +199,6 @@ void Autons::updateClaw() {
 // both routines get the change.
 // ========================================================================
 void Autons::rightSideOpening() {
-    resetLift();
     closeClaw(0); // close claw on the preload; it keeps closing while the robot starts moving
 
     chassis->setPose(-61.648, -0.646, 90);
