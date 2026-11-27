@@ -6,13 +6,13 @@ closeClaw(0); // close claw on the preload; it keeps closing while the robot sta
 
 // same start as auton2, mirrored: X and Y swapped, heading = 90 - auton2's heading
 chassis->setPose(-0.646, -61.648, 0);
-liftTo(4.3, 2000, false);
+liftTo(5, 2000, false);
 toggle(2);
 
 chassis->moveToPoint(-8.6, -47, 1000, {.maxSpeed = 100, .minSpeed = 80, .earlyExitRange = 5}, true);
 chassis->moveToPoint(-18.193, -48, 1000, {.maxSpeed = 100, .minSpeed = 50}, false);
 
-pushFor(80, 80, 500);  // square up on the goal
+pushFor(100, 100, 800);  // square up on the goal
 
 liftTo(0);
 openClaw();
@@ -27,10 +27,11 @@ closeClaw(0);
 
 chassis->turnToHeading(-90, 1000, {}, false);
 distanceReset();
-liftTo(7);
+liftTo(8);
 chassis->moveToPoint(0, -58, 1000, {.forwards = false, .maxSpeed = 100}, false);
 waitUntilLiftDone();
 chassis->moveToPoint(-21, -49, 1000, {.maxSpeed = 70}, false);
+pushFor(100, 100, 1000);
 liftTo(4);
 waitUntilLiftDone();
 openClaw();
@@ -46,7 +47,7 @@ closeClaw(0);
 
 chassis->turnToHeading(90, 1000, {}, false);
 distanceReset();
-liftTo(9);
+liftTo(10);
 
 chassis->moveToPoint(0, -58, 1000, {.forwards = false, .maxSpeed = 100}, false);
 waitUntilLiftDone();
