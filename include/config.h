@@ -37,7 +37,6 @@ constexpr double FIELD_WALL = 70.2;
 extern pros::Distance cascadeDistance;
 // tracking wheels
 extern lemlib::TrackingWheel vertical;
-extern lemlib::TrackingWheel cascade;
 
 // extra motors
 extern pros::Motor intake_motor;
@@ -61,6 +60,7 @@ extern std::int32_t cascadeRawMm;   // last raw distance sensor reading, in mm
 extern int cascadeBadReads;         // bad sensor readings since the last liftTo()
 extern const char* liftStopReason;  // why the last liftTo() ended
 extern bool cascadeSensorBlocked;   // true while the sensor is ignored because it jumped (sees the goal)
+extern bool cascadeUsingEncoder;    // true while the height comes from the motor encoders instead
 
 
 // drivetrain + chassis

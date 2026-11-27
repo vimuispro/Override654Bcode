@@ -73,8 +73,9 @@ void Autons::liftTo(double height, int timeout, bool wait, int maxSpeed) {
                         liftLastHeight = height;
                         liftLastMoveTime = pros::millis();
                     }
-                    // while the sensor is blocked the height is frozen, so don't call that a stall
-                    if (cascadeSensorBlocked) liftLastMoveTime = pros::millis();
+                    // if the sensor is blocked AND there's no encoder estimate yet, the height is
+                    // frozen, so don't call that a stall
+                    if (cascadeSensorBlocked && !cascadeUsingEncoder) liftLastMoveTime = pros::millis();
                     const bool stalled = pros::millis() - liftLastMoveTime > LIFT_STALL_MS;
 
                     // done when: close enough, stuck (hard stop / too heavy), or out of time
