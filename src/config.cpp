@@ -1,5 +1,6 @@
 #include "config.h"
 #include <cmath>
+#include <mutex>
 
 // controller
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
@@ -24,60 +25,111 @@ int cascadeBadReads = 0;
 const char* liftStopReason = "-";
 bool cascadeSensorBlocked = false;
 
-// ---- Jump filter for the cascade distance sensor ----
-// When the robot lines up with a goal, the sensor can see the goal instead of the lift and
-// the reading jumps 6-7" in ONE reading. The lift can't really do that: even when it gets stuck
-// and then falls, it moves at most ~2-2.5" between readings, so a fall shows up as several
-// smaller steps and is always trusted. Only a single step bigger than SENSOR_JUMP_INCHES is
-// treated as "seeing something else"; the last good height is kept until the reading comes
-// back (another big jump, or back near the last good value).
-static const double        SENSOR_JUMP_INCHES     = 4.5;   // TUNE: must stay above a real fall step, below the goal jump
-static const std::uint32_t SENSOR_BLOCKED_MAX_MS  = 3000;  // safety: trust the sensor again after this long
-static double        lastRawInches      = -1;  // previous reading (good or not)
-static double        lastTrustedInches  = -1;  // last reading we believed
-static std::uint32_t blockedSince       = 0;
+bool cascadeUsingEncoder = false;
+
+// ---- Cascade height: distance sensor + motor encoder backup ----
+// The distance sensor gives the height. When the robot lines up with a goal, the sensor can
+// see the goal instead of the lift and the reading jumps 6-7" in ONE reading. The lift can't
+// really do that: even when it gets stuck and then falls, it moves at most ~2-2.5" between
+// readings, so a fall shows up as several smaller steps and is always trusted. Only a single
+// step bigger than SENSOR_JUMP_INCHES counts as "blocked".
+//
+// While blocked (or when the sensor gives no reading), the height comes from the cascade
+// motor encoders instead: last good height + how far the motors turned since then.
+// Inches per motor degree is LEARNED automatically while the sensor is reading fine,
+// so there's nothing to measure. Once the sensor agrees with the encoder estimate again,
+// it's trusted again.
+static const double        SENSOR_JUMP_INCHES    = 4.5;   // TUNE: above a real fall step, below the goal jump
+static const std::uint32_t SENSOR_BLOCKED_MAX_MS = 3000;  // safety: trust the sensor again after this long
+static const double        ENC_MATCH_INCHES      = 2.0;   // sensor trusted again when this close to the encoder estimate
+static const double        ENC_LEARN_INCHES      = 3.0;   // learn inches/degree over moves at least this long
+
+static double        lastRawInches = -1;  // previous sensor reading (trusted or not)
+static double        trustedRaw    = -1;  // last sensor reading we believed
+static double        trustedDeg    = 0;   // motor position at that reading
+static double        anchorRaw     = -1;  // start of the current learning window
+static double        anchorDeg     = 0;
+static double        inchesPerDeg  = 0;   // learned; 0 = not known yet
+static std::uint32_t blockedSince  = 0;
+static pros::Mutex   heightMutex;         // several tasks read the height
+
+static double rawToHeight(double rawInches) {
+    double height = std::fabs(rawInches - CASCADE_ZERO_INCHES);
+    if (height < 0.0) height = 0.0;
+    if (height > CASCADE_MAX_HEIGHT_INCHES) height = CASCADE_MAX_HEIGHT_INCHES;
+    return height;
+}
 
 double getCascadeHeight() {
+    std::lock_guard<pros::Mutex> lock(heightMutex);
+    const std::uint32_t now = pros::millis();
+
+    const double deg = cascadeMotors.get_position();
+    const bool encoderOk = deg != PROS_ERR_F;
+    const bool canEstimate = encoderOk && inchesPerDeg != 0 && trustedRaw >= 0;
+    const double estimateRaw = canEstimate ? trustedRaw + (deg - trustedDeg) * inchesPerDeg : 0;
+
     const std::int32_t readingMm = cascadeDistance.get();
     cascadeRawMm = readingMm;
     if (readingMm == PROS_ERR || readingMm <= 0 || readingMm >= 9999) {
-        ++cascadeBadReads;   // sensor can't see the lift: reuse the last good height
+        ++cascadeBadReads;   // sensor can't see the lift
+        cascadeUsingEncoder = canEstimate;
+        if (canEstimate) cascadeVal = rawToHeight(estimateRaw);
+        return cascadeVal;   // (without an estimate: keep the last good height)
+    }
+    const double raw = static_cast<double>(readingMm) / 25.4;
+
+    if (lastRawInches < 0) {   // first reading
+        lastRawInches = raw;
+        trustedRaw = raw;
+        trustedDeg = deg;
+    }
+    const bool bigJump = std::fabs(raw - lastRawInches) > SENSOR_JUMP_INCHES;
+    lastRawInches = raw;
+
+    if (!cascadeSensorBlocked) {
+        if (bigJump) {
+            cascadeSensorBlocked = true;   // probably seeing the goal
+            blockedSince = now;
+        }
+    } else {
+        const bool backToNormal = canEstimate
+            ? std::fabs(raw - estimateRaw) <= ENC_MATCH_INCHES                       // agrees with the encoders
+            : (bigJump || std::fabs(raw - trustedRaw) <= SENSOR_JUMP_INCHES);        // no encoder estimate yet
+        if (backToNormal || now - blockedSince > SENSOR_BLOCKED_MAX_MS) {
+            cascadeSensorBlocked = false;
+        }
+    }
+
+    if (cascadeSensorBlocked) {
+        cascadeUsingEncoder = canEstimate;
+        if (canEstimate) cascadeVal = rawToHeight(estimateRaw);
         return cascadeVal;
     }
 
-    const double readingInches = static_cast<double>(readingMm) / 25.4;
-
-    // jump filter (see SENSOR_JUMP_INCHES above)
-    if (lastRawInches < 0) {
-        lastRawInches = readingInches;
-        lastTrustedInches = readingInches;
-    }
-    const bool bigJump = std::fabs(readingInches - lastRawInches) > SENSOR_JUMP_INCHES;
-    lastRawInches = readingInches;
-    if (!cascadeSensorBlocked) {
-        if (bigJump) {
-            cascadeSensorBlocked = true;   // probably seeing the goal: keep the last good height
-            blockedSince = pros::millis();
-            return cascadeVal;
-        }
-    } else {
-        const bool backNearTrusted = std::fabs(readingInches - lastTrustedInches) <= SENSOR_JUMP_INCHES;
-        const bool blockedTooLong  = pros::millis() - blockedSince > SENSOR_BLOCKED_MAX_MS;
-        if (bigJump || backNearTrusted || blockedTooLong) {
-            cascadeSensorBlocked = false;  // goal is out of view again
-        } else {
-            return cascadeVal;
+    // trusted reading
+    cascadeUsingEncoder = false;
+    trustedRaw = raw;
+    if (encoderOk) {
+        trustedDeg = deg;
+        // learn inches per motor degree from real moves
+        if (anchorRaw < 0) {
+            anchorRaw = raw;
+            anchorDeg = deg;
+        } else if (std::fabs(raw - anchorRaw) >= ENC_LEARN_INCHES && std::fabs(deg - anchorDeg) > 10) {
+            const double sample = (raw - anchorRaw) / (deg - anchorDeg);
+            const bool plausible = inchesPerDeg == 0 ||
+                (sample * inchesPerDeg > 0 &&                                   // same direction
+                 std::fabs(sample - inchesPerDeg) < 0.5 * std::fabs(inchesPerDeg)); // not wildly different
+            if (plausible) {
+                inchesPerDeg = inchesPerDeg == 0 ? sample : 0.7 * inchesPerDeg + 0.3 * sample;
+            }
+            anchorRaw = raw;
+            anchorDeg = deg;
         }
     }
-    lastTrustedInches = readingInches;
-
-    double height = std::fabs(readingInches - CASCADE_ZERO_INCHES);
-    if (height < 0.0) height = 0.0;
-    if (height > CASCADE_MAX_HEIGHT_INCHES) height = CASCADE_MAX_HEIGHT_INCHES;
-    // keep the value shown on the screen fresh. Before, only driver control updated it,
-    // so during an auton the screen stayed stuck at 0.
-    cascadeVal = height;
-    return height;
+    cascadeVal = rawToHeight(raw);
+    return cascadeVal;
 }
 
 

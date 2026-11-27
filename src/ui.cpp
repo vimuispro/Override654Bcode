@@ -234,7 +234,7 @@ void uiUpdate() {
     lv_label_set_text(cascadeLabel, buf);
     snprintf(buf, sizeof(buf), "Lift: %s  raw: %ld mm  bad: %d%s",
              liftStopReason, static_cast<long>(cascadeRawMm), cascadeBadReads,
-             cascadeSensorBlocked ? "  BLOCKED" : "");
+             cascadeUsingEncoder ? "  ENCODER" : (cascadeSensorBlocked ? "  BLOCKED" : ""));
     lv_label_set_text(liftDebugLabel, buf);
     pros::delay(50);
 
