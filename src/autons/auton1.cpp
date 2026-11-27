@@ -2,7 +2,6 @@
 
 //-----------------------------------------------------------A1: LEFT Side Auton--------------------------------------------
 void Autons::auton1(){
-resetLift();
 closeClaw(0); // close claw on the preload; it keeps closing while the robot starts moving
 
 // same start as auton2, mirrored: X and Y swapped, heading = 90 - auton2's heading

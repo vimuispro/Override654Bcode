@@ -14,7 +14,6 @@ extern pros::Imu imu;
 extern pros::Rotation verticalEnc;
 extern pros::Optical colorSensor;
 extern double cascadeVal;
-extern double cascadeOffsetInches;
 extern bool isBlueTeam;
 extern pros::Distance left_distance;
 extern pros::Distance back_distance;
@@ -51,13 +50,17 @@ extern pros::adi::DigitalOut clawLift; // piston that moves the claw up/down
 
 constexpr double CASCADE_MAX_HEIGHT_INCHES = 36.0; // measured top of the lift
 constexpr double CASCADE_MIN_HEIGHT_INCHES = 1.0;  // bottom stop height
+// Lift height = sensor reading (inches) - CASCADE_ZERO_INCHES. It's a fixed number, so the lift
+// is never re-zeroed at startup or with X. With 0, the height is just the sensor reading.
+// To make the bottom read 0: lower the lift fully, read "raw: ___ mm" on the brain screen,
+// and put that number / 25.4 here.
+constexpr double CASCADE_ZERO_INCHES = 0.0;
 double getCascadeHeight();
 // lift debugging (shown on the brain screen)
 extern std::int32_t cascadeRawMm;   // last raw distance sensor reading, in mm
 extern int cascadeBadReads;         // bad sensor readings since the last liftTo()
 extern const char* liftStopReason;  // why the last liftTo() ended
 extern bool cascadeSensorBlocked;   // true while the sensor is ignored because it jumped (sees the goal)
-void calibrateCascadeHeight();
 
 
 // drivetrain + chassis

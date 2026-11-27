@@ -18,7 +18,6 @@ pros::Imu imu(7);
 pros::Rotation verticalEnc(2); // keep POSITIVE
 pros::Optical colorSensor(20);
 double cascadeVal = 0.0;
-double cascadeOffsetInches = 0.0;
 bool isBlueTeam = true;
 std::int32_t cascadeRawMm = 0;
 int cascadeBadReads = 0;
@@ -72,7 +71,7 @@ double getCascadeHeight() {
     }
     lastTrustedInches = readingInches;
 
-    double height = std::fabs(readingInches - cascadeOffsetInches);
+    double height = std::fabs(readingInches - CASCADE_ZERO_INCHES);
     if (height < 0.0) height = 0.0;
     if (height > CASCADE_MAX_HEIGHT_INCHES) height = CASCADE_MAX_HEIGHT_INCHES;
     // keep the value shown on the screen fresh. Before, only driver control updated it,
@@ -81,27 +80,6 @@ double getCascadeHeight() {
     return height;
 }
 
-void calibrateCascadeHeight() {
-    double sum = 0.0;
-    int samples = 0;
-
-    for (int i = 0; i < 10; ++i) {
-        const std::int32_t readingMm = cascadeDistance.get();
-        if (readingMm != PROS_ERR && readingMm > 0 && readingMm < 9999) {
-            sum += static_cast<double>(readingMm) / 25.4;
-            ++samples;
-        }
-        pros::delay(10);
-    }
-
-    if (samples > 0) {
-        cascadeOffsetInches = sum / samples;
-    }
-    // start the jump filter fresh from here
-    lastRawInches = -1;
-    cascadeSensorBlocked = false;
-    cascadeVal = getCascadeHeight();
-}
 
 // tracking wheels
 lemlib::TrackingWheel vertical(
